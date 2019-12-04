@@ -19,6 +19,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.shmvanhouten</groupId>
+            <artifactId>adventofcode2017</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
