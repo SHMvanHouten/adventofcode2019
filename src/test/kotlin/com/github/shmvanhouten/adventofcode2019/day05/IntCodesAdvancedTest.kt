@@ -18,8 +18,8 @@ class IntCodesAdvancedTest {
 
         @Test
         internal fun `instruction 3 reads the input, 4 outputs the input`() {
-            val computer = Computer(100, IntCode(3, 0, 4, 0, 99))
-            computer.run()
+            val computer = Computer(IntCode(3, 0, 4, 0, 99))
+            computer.run(100)
             assertThat(computer.output, equalTo(listOf(100)))
         }
 
@@ -31,8 +31,8 @@ class IntCodesAdvancedTest {
 
         @Test
         internal fun part1() {
-            val computer = Computer(1, IntCode(input))
-            computer.run()
+            val computer = Computer( IntCode(input))
+            computer.run(1)
             println(computer.output)
             assertThat(computer.output.last(), equalTo(5821753))
         }
@@ -84,11 +84,11 @@ class IntCodesAdvancedTest {
             @Test
             internal fun `some test values`() {
                 val intCode = IntCode(3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8)
-                val computer1 = Computer(8, intCode)
-                computer1.run()
+                val computer1 = Computer(intCode)
+                computer1.run(8)
                 assertThat(computer1.output.first(), equalTo(1))
-                val computer2 = Computer(7, intCode)
-                computer2.run()
+                val computer2 = Computer(intCode)
+                computer2.run(7)
                 assertThat(computer2.output.first(), equalTo(0))
             }
         }
@@ -97,11 +97,11 @@ class IntCodesAdvancedTest {
         internal fun `we support jump to if true`() {
             //Here are some jump tests that take an input, then output 0 if the input was zero or 1 if the input was non-zero
             val intCode = IntCode(3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9)
-            val computer1 = Computer(0, intCode)
-            computer1.run()
+            val computer1 = Computer(intCode)
+            computer1.run(0)
             assertThat(computer1.output.first(), equalTo(0))
-            val computer2 = Computer(99, intCode)
-            computer2.run()
+            val computer2 = Computer(intCode)
+            computer2.run(99)
             assertThat(computer2.output.first(), equalTo(1))
 
         }
@@ -127,8 +127,8 @@ class IntCodesAdvancedTest {
 
         @Test
         internal fun `part 2`() {
-            val computer = Computer(5, IntCode(input))
-            computer.run()
+            val computer = Computer(IntCode(input))
+            computer.run(5)
             println(computer.output)
             assertThat(computer.output.first(), equalTo(11956381))
         }
@@ -138,9 +138,9 @@ class IntCodesAdvancedTest {
             input: Int,
             expected: Int
         ) {
-            val computer1 = Computer(input, intCode)
-            computer1.run()
-            assertThat(computer1.output.first(), equalTo(expected))
+            val computer = Computer(intCode)
+            computer.run(input)
+            assertThat(computer.output.first(), equalTo(expected))
         }
     }
 

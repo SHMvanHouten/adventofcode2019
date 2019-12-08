@@ -1,4 +1,4 @@
-package util
+package com.github.shmvanhouten.adventofcode2019.util
 
 object FileReader {
 

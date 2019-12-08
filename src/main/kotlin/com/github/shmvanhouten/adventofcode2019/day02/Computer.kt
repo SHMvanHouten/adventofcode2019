@@ -1,5 +1,7 @@
 package com.github.shmvanhouten.adventofcode2019.day02
 
+import java.util.*
+
 private const val END_CODE = "99"
 private const val ADD_CODE = "01"
 private const val MUL_CODE = "02"
@@ -11,14 +13,23 @@ private const val LESS_CODE = "07"
 private const val EQ_CODE = "08"
 
 
-class Computer(private val input: Int = 0, val intCode: IntCode) {
+class Computer(val intCode: IntCode) {
     private val intCodes = intCode.ints.toMutableList()
+    private val inputs: Stack<Int> = Stack()
     val output = mutableListOf<Int>()
 
-    fun run(): List<Int> {
-        var pointer = 0
+    private var pointer = 0
+
+    fun run(input : Int = 0): List<Int> {
+        inputs.push(input)
         while (pointer != -1) {
-            pointer = execute(pointer)
+            val execute = execute(pointer)
+            if(execute == -2) {
+                // pause execution to wait for input
+                return emptyList()
+            } else {
+                pointer = execute
+            }
         }
         return intCodes
     }
@@ -68,8 +79,13 @@ class Computer(private val input: Int = 0, val intCode: IntCode) {
     }
 
     private fun executeRead(intCodes: MutableList<Int>, pointer: Int): Int {
-        intCodes[intCodes[pointer + 1]] = input
-        return pointer + 2
+        return if(inputs.empty()) {
+            // pause execution
+            -2
+        } else {
+            intCodes[intCodes[pointer + 1]] = inputs.pop()
+            pointer + 2
+        }
     }
 
     private fun executeWrite(

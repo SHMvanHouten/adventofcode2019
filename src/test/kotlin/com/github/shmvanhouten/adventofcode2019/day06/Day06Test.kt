@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import util.FileReader.readFile
+import com.github.shmvanhouten.adventofcode2019.util.FileReader.readFile
 
 class Day06Test {
 

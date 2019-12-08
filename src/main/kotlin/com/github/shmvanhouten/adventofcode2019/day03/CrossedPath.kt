@@ -3,7 +3,7 @@ package com.github.shmvanhouten.adventofcode2019.day03
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Coordinate
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Direction
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Direction.*
-import util.splitIntoTwo
+import com.github.shmvanhouten.adventofcode2019.util.splitIntoTwo
 import kotlin.math.abs
 
 fun findDistanceFromNearestCrossing(wire1: Wire, wire2: Wire): Int {
