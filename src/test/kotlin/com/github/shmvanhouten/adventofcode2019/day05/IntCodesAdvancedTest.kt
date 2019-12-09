@@ -26,7 +26,9 @@ class IntCodesAdvancedTest {
         @Test
         internal fun `we should support parameter modes`() {
             val intCode = IntCode(1002, 4, 3, 4, 33)
-            assertThat(Computer(intCode = intCode).run(), equalTo(listOf(1002L, 4L, 3L, 4L, 99)))
+            val computer = Computer(intCode = intCode)
+            computer.run()
+            assertThat(computer.getIntCodes(), equalTo(listOf(1002L, 4L, 3L, 4L, 99)))
         }
 
         @Test
@@ -48,21 +50,27 @@ class IntCodesAdvancedTest {
             internal fun `1 is less than 7`() {
                 // intcode[1] (= 1) < intcode[0] (=7) is true therefore intcode[0] is set to 1
                 val intCode = IntCode(7, 1, 0, 0, 99)
-                assertThat(Computer(intCode = intCode).run(), equalTo(listOf(1L, 1L, 0L, 0L, 99)))
+                val computer = Computer(intCode = intCode)
+                computer.run()
+                assertThat(computer.getIntCodes(), equalTo(listOf(1L, 1L, 0L, 0L, 99)))
             }
 
             @Test
             internal fun `7 is NOT less than 2`() {
                 // intcode[1] (= 7) < intcode[2] (=2) is false therefore intcode[0] is set to 0
                 val intCode = IntCode(7, 0, 2, 0, 99)
-                assertThat(Computer(intCode = intCode).run(), equalTo(listOf(0L, 0L, 2L, 0L, 99)))
+                val computer = Computer(intCode = intCode)
+                computer.run()
+                assertThat(computer.getIntCodes(), equalTo(listOf(0L, 0L, 2L, 0L, 99)))
             }
 
             @Test
             internal fun `less than supports parameter mode`() {
                 // 3 < 2 is false therefore intcode[0] is set to 0
                 val intCode = IntCode(1107, 3, 2, 0, 99)
-                assertThat(Computer(intCode = intCode).run(), equalTo(listOf(0L, 3L, 2L, 0L, 99)))
+                val computer = Computer(intCode = intCode)
+                computer.run()
+                assertThat(computer.getIntCodes(), equalTo(listOf(0L, 3L, 2L, 0L, 99)))
             }
         }
 
@@ -72,13 +80,17 @@ class IntCodesAdvancedTest {
             internal fun `7 is NOT equal to 1`() {
                 // intcode[1] (= 1) == intcode[0] (=7) is false therefore intcode[0] is set to 0
                 val intCode = IntCode(8, 1, 0, 0, 99)
-                assertThat(Computer(intCode = intCode).run(), equalTo(listOf(0L, 1L, 0L, 0L, 99)))
+                val computer = Computer(intCode = intCode)
+                computer.run()
+                assertThat(computer.getIntCodes(), equalTo(listOf(0L, 1L, 0L, 0L, 99)))
             }
 
             @Test
             internal fun `equals supports paramater mode`() {
                 val intCode = IntCode(1108, 1, 3, 1, 99)
-                assertThat(Computer(intCode = intCode).run(), equalTo(listOf(1108L, 0L, 3L, 1L, 99)))
+                val computer = Computer(intCode = intCode)
+                computer.run()
+                assertThat(computer.getIntCodes(), equalTo(listOf(1108L, 0L, 3L, 1L, 99)))
             }
 
             @Test

@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2019.day02
 
+import com.github.shmvanhouten.adventofcode2019.day02.ExecutionType.*
 import java.util.*
 
 private const val END_CODE = "99"
@@ -18,37 +19,35 @@ private const val IMMEDIATE_MODE = '1'
 private const val RELATIVE_MODE = '2'
 
 class Computer(val intCode: IntCode) {
-    private val intCodes = intCode.ints.mapIndexed{ i, value -> i.toLong() to value}.toMap().toMutableMap()
-    private val inputs: Stack<Long> = Stack()
+    private val intCodes = intCode.ints.mapIndexed { i, value -> i.toLong() to value }.toMap().toMutableMap()
+    private val inputs: Queue<Long> = LinkedList()
     val output = mutableListOf<Long>()
 
-    private var pointer : Long = 0
-    private var relativeBase : Long = 0
+    private var execution = RUN
+    private var pointer: Long = 0
+    private var relativeBase: Long = 0
 
-    fun run(input : Long = 0): List<Long> {
-        inputs.push(input)
-        while (pointer != -1L) {
-            val execute = execute(pointer)
-            if(execute == -2L) {
-                // pause execution to wait for input
-                return emptyList()
-            } else {
-                pointer = execute
-            }
+    fun run(input: Long = 0): ExecutionType {
+        inputs.add(input)
+        execution = RUN
+        while (execution == RUN) {
+            pointer = execute(pointer)
         }
+        return execution
+    }
+
+    fun getIntCodes(): List<Long> {
         return intCodes.values.toList()
     }
 
-    private fun execute(pointer: Long): Long {
+    private fun execute(pointer: Pointer): Pointer {
         return executeInstruction(pointer)
     }
 
-    private fun executeInstruction(
-        pointer: Long
-    ): Long {
-        val instruction = intCodes[pointer].toString().leftPad(5, '0')
-        return when (instruction.substring(3)) {
-            END_CODE -> -1
+    private fun executeInstruction(pointer: Pointer): Pointer {
+        val instruction = toInstruction(pointer)
+        return when (instruction.opCode()) {
+            END_CODE -> end(pointer)
             ADD_CODE -> executeAdd(instruction, pointer)
             MUL_CODE -> executeMultiply(instruction, pointer)
             READ_CODE -> executeRead(instruction, pointer)
@@ -63,61 +62,46 @@ class Computer(val intCode: IntCode) {
 
     }
 
-    private fun executeAdd(
-        instruction: String,
-        pointer: Long
-    ): Long {
+    private fun end(pointer: Pointer): Pointer {
+        execution = STOP
+        return pointer
+    }
+
+    private fun executeAdd(instruction: Instruction, pointer: Pointer): Pointer {
         val parameters = intCodes.subList(pointer + 1, pointer + 4)
-        val targetIndex = getTargetIndex(parameters[2], instruction[0])
+        val targetIndex = getTargetIndex(parameters[2], instruction.thirdParameterMode())
         intCodes[targetIndex] = calculateAdd(instruction, parameters)
         return pointer + 4
     }
 
-    private fun getTargetIndex(param: Long, mode: Char): Long {
-        return when(mode) {
-            POSITION_MODE -> param
-            RELATIVE_MODE -> param + relativeBase
-            else -> throw IllegalStateException("$mode mode is not supported for intCode write operations ")
-        }
-    }
-
-
-    private fun executeMultiply(
-        instruction: String,
-        pointer: Long
-    ): Long {
+    private fun executeMultiply(instruction: Instruction, pointer: Pointer): Pointer {
         val parameters = intCodes.subList(pointer + 1, pointer + 4)
-        val targetIndex = getTargetIndex(parameters[2], instruction[0])
+        val targetIndex = getTargetIndex(parameters[2], instruction.thirdParameterMode())
         intCodes[targetIndex] = calculateMultiply(instruction, parameters)
         return pointer + 4
     }
 
-    private fun executeRead(
-        instruction: String,
-        pointer: Long): Long {
-        return if(inputs.empty()) {
-            // pause execution
-            -2
+    private fun executeRead(instruction: Instruction, pointer: Pointer): Pointer {
+        return if (inputs.isEmpty()) {
+            execution = REQUIRES_INPUT
+            pointer
         } else {
-            val targetIndex = getTargetIndex(intCodes[pointer + 1]?:0, instruction[2])
-            intCodes[targetIndex] = inputs.pop()
+            val targetIndex = getTargetIndex(intCodes[pointer + 1] ?: 0, instruction.firstParameterMode())
+            intCodes[targetIndex] = inputs.poll()
             pointer + 2
         }
     }
 
-    private fun executeWrite(
-        instruction: String,
-        pointer: Long
-    ): Long {
-        val parameter = intCodes[pointer + 1]?:0
-        output.add(getParameterValue(instruction[2], parameter))
+    private fun executeWrite(instruction: Instruction, pointer: Pointer): Pointer {
+        val parameter = intCodes[pointer + 1] ?: 0
+        output.add(getParameterValue(instruction.firstParameterMode(), parameter))
         return pointer + 2
     }
 
-    private fun executeJumpIfTrue(instruction: String, pointer: Long): Long {
+    private fun executeJumpIfTrue(instruction: Instruction, pointer: Pointer): Pointer {
         val parameters = intCodes.subList(pointer + 1, pointer + 3)
-        val (param1, param2) = getParameterValues(instruction, parameters)
-        return if(param1 != 0L) {
+        val (param1, param2) = getParameterValues(instruction, parameters[0], parameters[1])
+        return if (param1 != 0L) {
             param2
         } else {
             // don't jump
@@ -125,10 +109,10 @@ class Computer(val intCode: IntCode) {
         }
     }
 
-    private fun executeJumpIfFalse(instruction: String, pointer: Long): Long {
+    private fun executeJumpIfFalse(instruction: Instruction, pointer: Pointer): Pointer {
         val parameters = intCodes.subList(pointer + 1, pointer + 3)
-        val (param1, param2) = getParameterValues(instruction, parameters)
-        return if(param1 == 0L) {
+        val (param1, param2) = getParameterValues(instruction, parameters[0], parameters[1])
+        return if (param1 == 0L) {
             param2
         } else {
             // don't jump
@@ -136,46 +120,42 @@ class Computer(val intCode: IntCode) {
         }
     }
 
-    private fun executeLessThan(instruction: String, pointer: Long): Long {
+    private fun executeLessThan(instruction: Instruction, pointer: Pointer): Pointer {
         val parameters = intCodes.subList(pointer + 1, pointer + 4)
-        val targetIndex = getTargetIndex(parameters[2], instruction[0])
+        val targetIndex = getTargetIndex(parameters[2], instruction.thirdParameterMode())
         intCodes[targetIndex] = calculateLessThan(instruction, parameters)
         return pointer + 4
     }
 
-    private fun executeEquals(instruction: String, pointer: Long): Long {
+    private fun executeEquals(instruction: Instruction, pointer: Pointer): Pointer {
         val parameters = intCodes.subList(pointer + 1, pointer + 4)
-        val targetIndex = getTargetIndex(parameters[2], instruction[0])
+        val targetIndex = getTargetIndex(parameters[2], instruction.thirdParameterMode())
         intCodes[targetIndex] = calculateEquals(instruction, parameters)
         return pointer + 4
     }
 
-    private fun executeAdjustRelativeBase(instruction: String, pointer: Long): Long {
-        relativeBase += getParameterValue(instruction[2], intCodes[pointer + 1]?:0)
+    private fun executeAdjustRelativeBase(instruction: Instruction, pointer: Pointer): Pointer {
+        relativeBase += getParameterValue(instruction.firstParameterMode(), intCodes[pointer + 1] ?: 0)
         return pointer + 2
     }
 
-    private fun calculateAdd(
-        instruction: String,
-        parameters: List<Long>
+    private fun calculateAdd(instruction: Instruction, parameters: List<Long>): Long =
+        calculate(instruction, parameters) { i, j -> i + j }
+
+    private fun calculateMultiply(instruction: Instruction, parameters: List<Long>): Long =
+        calculate(instruction, parameters) { i, j -> i * j }
+
+    private fun calculate(
+        instruction: Instruction,
+        parameters: List<Long>,
+        operation: (Long, Long) -> Long
     ): Long {
-        val (param1, param2) = getParameterValues(instruction, parameters)
-        return param1 + param2
+        val (param1, param2) = getParameterValues(instruction, parameters[0], parameters[1])
+        return operation.invoke(param1, param2)
     }
 
-    private fun calculateMultiply(
-        instruction: String,
-        parameters: List<Long>
-    ): Long {
-        val (param1, param2) = getParameterValues(instruction, parameters)
-        return param1 * param2
-    }
-
-    private fun calculateLessThan(
-        instruction: String,
-        parameters: List<Long>
-    ): Long {
-        val (param1, param2) = getParameterValues(instruction, parameters)
+    private fun calculateLessThan(instruction: Instruction, parameters: List<Long>): Long {
+        val (param1, param2) = getParameterValues(instruction, parameters[0], parameters[1])
         return if (param1 < param2) {
             1
         } else {
@@ -183,12 +163,9 @@ class Computer(val intCode: IntCode) {
         }
     }
 
-    private fun calculateEquals (
-        instruction: String,
-        parameters: List<Long>
-    ): Long {
-        val (param1, param2) = getParameterValues(instruction, parameters)
-        return if(param1 == param2) {
+    private fun calculateEquals(instruction: Instruction, parameters: List<Long>): Long {
+        val (param1, param2) = getParameterValues(instruction, parameters[0], parameters[1])
+        return if (param1 == param2) {
             1
         } else {
             0
@@ -196,30 +173,62 @@ class Computer(val intCode: IntCode) {
     }
 
     private fun getParameterValues(
-        instruction: String,
-        parameters: List<Long>
-    ) : Pair<Long, Long> {
-        return getParameterValue(instruction[2], parameters[0]) to
-                getParameterValue(instruction[1], parameters[1])
-    }
+        instruction: Instruction,
+        firstParameter: Long,
+        secondParameter: Long
+    ): Pair<Long, Long> = getParameterValue(instruction.firstParameterMode(), firstParameter) to
+            getParameterValue(instruction.secondParameterMode(), secondParameter)
 
-    private fun getParameterValue(
-        mode: Char,
-        parameter: Long
-    ): Long {
-        return when (mode) {
+    private fun getParameterValue(mode: Char, parameter: Long): Long =
+        when (mode) {
             IMMEDIATE_MODE -> parameter
-            RELATIVE_MODE -> intCodes[relativeBase + parameter]?:0
-            else -> intCodes[parameter]?:0
+            RELATIVE_MODE -> intCodes[relativeBase + parameter] ?: 0
+            else -> intCodes[parameter] ?: 0
         }
-    }
+
+    private fun getTargetIndex(param: Long, mode: Char): Long =
+        when (mode) {
+            POSITION_MODE -> param
+            RELATIVE_MODE -> param + relativeBase
+            else -> throw IllegalStateException("$mode mode is not supported for intCode write operations ")
+        }
+
+    private fun toInstruction(pointer: Long): Instruction =
+        intCodes[pointer].toString().leftPad(5, '0')
 
 }
 
+private fun String.secondParameterMode(): Mode {
+    return this[1]
+}
+
+private fun String.firstParameterMode(): Mode {
+    return this[2]
+}
+
+private fun String.thirdParameterMode(): Mode {
+    return this[0]
+}
+
+private fun String.opCode(): OpCode {
+    return substring(3)
+}
+
 private fun MutableMap<Long, Long>.subList(startIndex: Long, endIndex: Long): List<Long> {
-    return startIndex.until(endIndex).map { this[it]?:0 }
+    return startIndex.until(endIndex).map { this[it] ?: 0 }
 }
 
 private fun String.leftPad(size: Long, char: Char): String {
     return 0.until(size - this.length).map { char }.joinToString("") + this
+}
+
+typealias Instruction = String
+typealias OpCode = String
+typealias Mode = Char
+typealias Pointer = Long
+
+enum class ExecutionType {
+    RUN,
+    REQUIRES_INPUT,
+    STOP
 }

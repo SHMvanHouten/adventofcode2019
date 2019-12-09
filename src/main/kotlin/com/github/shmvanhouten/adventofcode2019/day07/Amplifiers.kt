@@ -1,6 +1,8 @@
 package com.github.shmvanhouten.adventofcode2019.day07
 
 import com.github.shmvanhouten.adventofcode2019.day02.Computer
+import com.github.shmvanhouten.adventofcode2019.day02.ExecutionType.RUN
+import com.github.shmvanhouten.adventofcode2019.day02.ExecutionType.STOP
 import com.github.shmvanhouten.adventofcode2019.day02.IntCode
 import com.github.shmvanhouten.adventofcode2019.util.listPermutations
 
@@ -16,9 +18,9 @@ fun computeFeedbackedThrusterSignal(
     thrusterSettings: List<Long>
 ): Long {
     val computers = setUp(thrusterSettings, intCode)
-    var runResult = emptyList<Long>()
+    var runResult = RUN
     var input = 0L
-    while (runResult.isEmpty()) {
+    while (runResult != STOP) {
         for (computer in computers) {
             runResult = computer.run(input)
             input = computer.output.last()

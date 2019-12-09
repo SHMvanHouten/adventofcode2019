@@ -4,7 +4,9 @@ fun findTargetOutput(intCode: IntCode, target: Long): Pair<Long, Long> {
     for (i in 0L..Int.MAX_VALUE) {
         for (j in 0..i) {
             val result: Long = try {
-                Computer(intCode = intCode.withInitialParameters(i, j)).run()[0]
+                val computer = Computer(intCode = intCode.withInitialParameters(i, j))
+                computer.run()
+                computer.getIntCodes()[0]
             } catch (e: Exception) {
                 -1
             }
