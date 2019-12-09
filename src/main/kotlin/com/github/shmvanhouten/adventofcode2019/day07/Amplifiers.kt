@@ -5,19 +5,19 @@ import com.github.shmvanhouten.adventofcode2019.day02.IntCode
 import com.github.shmvanhouten.adventofcode2019.util.listPermutations
 
 // part 2
-fun maxFeedbackedThrusterSignal(intCode: IntCode): Int {
+fun maxFeedbackedThrusterSignal(intCode: IntCode): Long {
     return listPermutations((5..9).toList())
-        .map { computeFeedbackedThrusterSignal(intCode, it) }
+        .map { computeFeedbackedThrusterSignal(intCode, it.map{int -> int.toLong()}) }
         .max() ?: -1
 }
 
 fun computeFeedbackedThrusterSignal(
     intCode: IntCode,
-    thrusterSettings: List<Int>
-): Int {
+    thrusterSettings: List<Long>
+): Long {
     val computers = setUp(thrusterSettings, intCode)
-    var runResult = emptyList<Int>()
-    var input = 0
+    var runResult = emptyList<Long>()
+    var input = 0L
     while (runResult.isEmpty()) {
         for (computer in computers) {
             runResult = computer.run(input)
@@ -28,16 +28,16 @@ fun computeFeedbackedThrusterSignal(
 }
 
 // part 1
-fun computeMaxThrusterSignal(intCode: IntCode): Int {
+fun computeMaxThrusterSignal(intCode: IntCode): Long {
     return listPermutations((0..4).toList())
-        .map { computeThrusterSignal(intCode, it) }
+        .map { computeThrusterSignal(intCode, it.map{int -> int.toLong()}) }
         .max() ?: -1
 }
 
-fun computeThrusterSignal(intCode: IntCode, thrusterSettings: List<Int>): Int {
+fun computeThrusterSignal(intCode: IntCode, thrusterSettings: List<Long>): Long {
     val computers = setUp(thrusterSettings, intCode)
 
-    var input = 0
+    var input = 0L
     for (computer in computers) {
         computer.run(input)
         input = computer.output.last()
@@ -46,7 +46,7 @@ fun computeThrusterSignal(intCode: IntCode, thrusterSettings: List<Int>): Int {
 }
 
 private fun setUp(
-    thrusterSettings: List<Int>,
+    thrusterSettings: List<Long>,
     intCode: IntCode
 ): List<Computer> {
     return thrusterSettings.map { thrusterSetting ->
