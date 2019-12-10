@@ -33,7 +33,6 @@ class Day09Test {
                 assertThat(computer.output.first(), equalTo(22L))
             }
 
-
         }
 
         @Test
