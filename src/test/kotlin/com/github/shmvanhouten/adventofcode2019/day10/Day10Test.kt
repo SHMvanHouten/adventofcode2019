@@ -8,6 +8,43 @@ import org.junit.jupiter.api.Test
 
 class Day10Test {
 
+    val input = """
+                        |#....#.....#...#.#.....#.#..#....#
+                        |#..#..##...#......#.....#..###.#.#
+                        |#......#.#.#.....##....#.#.....#..
+                        |..#.#...#.......#.##..#...........
+                        |.##..#...##......##.#.#...........
+                        |.....#.#..##...#..##.....#...#.##.
+                        |....#.##.##.#....###.#........####
+                        |..#....#..####........##.........#
+                        |..#...#......#.#..#..#.#.##......#
+                        |.............#.#....##.......#...#
+                        |.#.#..##.#.#.#.#.......#.....#....
+                        |.....##.###..#.....#.#..###.....##
+                        |.....#...#.#.#......#.#....##.....
+                        |##.#.....#...#....#...#..#....#.#.
+                        |..#.............###.#.##....#.#...
+                        |..##.#.........#.##.####.........#
+                        |##.#...###....#..#...###..##..#..#
+                        |.........#.#.....#........#.......
+                        |#.......#..#.#.#..##.....#.#.....#
+                        |..#....#....#.#.##......#..#.###..
+                        |......##.##.##...#...##.#...###...
+                        |.#.....#...#........#....#.###....
+                        |.#.#.#..#............#..........#.
+                        |..##.....#....#....##..#.#.......#
+                        |..##.....#.#......................
+                        |.#..#...#....#.#.....#.........#..
+                        |........#.............#.#.........
+                        |#...#.#......#.##....#...#.#.#...#
+                        |.#.....#.#.....#.....#.#.##......#
+                        |..##....#.....#.....#....#.##..#..
+                        |#..###.#.#....#......#...#........
+                        |..#......#..#....##...#.#.#...#..#
+                        |.#.##.#.#.....#..#..#........##...
+                        |....#...##.##.##......#..#..##....
+            """.trimMargin().parse()
+
     @Nested
     inner class Part1 {
 
@@ -235,53 +272,17 @@ class Day10Test {
             assertThat(location, equalTo(Coordinate(11, 13)))
             assertThat(sees.size, equalTo(210))
         }
-    }
 
-    @Test
-    internal fun `part 1`() {
-        val input = """
-                        |#....#.....#...#.#.....#.#..#....#
-                        |#..#..##...#......#.....#..###.#.#
-                        |#......#.#.#.....##....#.#.....#..
-                        |..#.#...#.......#.##..#...........
-                        |.##..#...##......##.#.#...........
-                        |.....#.#..##...#..##.....#...#.##.
-                        |....#.##.##.#....###.#........####
-                        |..#....#..####........##.........#
-                        |..#...#......#.#..#..#.#.##......#
-                        |.............#.#....##.......#...#
-                        |.#.#..##.#.#.#.#.......#.....#....
-                        |.....##.###..#.....#.#..###.....##
-                        |.....#...#.#.#......#.#....##.....
-                        |##.#.....#...#....#...#..#....#.#.
-                        |..#.............###.#.##....#.#...
-                        |..##.#.........#.##.####.........#
-                        |##.#...###....#..#...###..##..#..#
-                        |.........#.#.....#........#.......
-                        |#.......#..#.#.#..##.....#.#.....#
-                        |..#....#....#.#.##......#..#.###..
-                        |......##.##.##...#...##.#...###...
-                        |.#.....#...#........#....#.###....
-                        |.#.#.#..#............#..........#.
-                        |..##.....#....#....##..#.#.......#
-                        |..##.....#.#......................
-                        |.#..#...#....#.#.....#.........#..
-                        |........#.............#.#.........
-                        |#...#.#......#.##....#...#.#.#...#
-                        |.#.....#.#.....#.....#.#.##......#
-                        |..##....#.....#.....#....#.##..#..
-                        |#..###.#.#....#......#...#........
-                        |..#......#..#....##...#.#.#...#..#
-                        |.#.##.#.#.....#..#..#........##...
-                        |....#...##.##.##......#..#..##....
-            """.trimMargin().parse()
+        @Test
+        internal fun `part 1`() {
+            val (location, sees) = findMonitoringStation(input)
+            println(location)
+            println(sees.size)
+            println(draw(sees))
+            assertThat(sees.size, equalTo(267))
+            assertThat(location, equalTo(Coordinate(26, 28)))
+        }
 
-        val (location, sees) = findMonitoringStation(input)
-        println(location)
-        println(sees.size)
-        println(draw(sees))
-        assertThat(sees.size, equalTo(267))
-        assertThat(location, equalTo(Coordinate(26, 28)))
     }
 
     private fun draw(coordinates: Collection<Coordinate>): String {
@@ -295,6 +296,147 @@ class Day10Test {
             }
         }
     }
+
+    @Nested
+    inner class Part2 {
+
+        @Test
+        internal fun `it destroys top then right then bottom then left`() {
+            val input = """
+                |.#.
+                |#O#
+                |.#.
+            """.trimMargin().toStation()
+            assertThat(
+                sort(input.location, input.sees),
+                equalTo(
+                    listOf(
+                        Coordinate(x = 1, y = 0),
+                        Coordinate(x = 2, y = 1),
+                        Coordinate(x = 1, y = 2),
+                        Coordinate(x = 0, y = 1)
+                    )
+                )
+            )
+
+        }
+
+        @Test
+        internal fun `it handles non astute angles`() {
+            val input = """
+                |...#..
+                |.#..##
+                |.O#...
+                |......
+            """.trimMargin().toStation()
+            assertThat(
+                sort(input.location, input.sees),
+                equalTo(
+                    listOf(
+                        Coordinate(x = 1, y = 1),
+                        Coordinate(x = 3, y = 0),
+                        Coordinate(x = 4, y = 1),
+                        Coordinate(x = 5, y = 1),
+                        Coordinate(x = 2, y = 2)
+                    )
+                )
+            )
+        }
+
+        @Test
+        internal fun `it handles non angles over 90`() {
+            val input = """
+                |......
+                |......
+                |.O#...
+                |.....#
+                |..#...
+                |....##
+            """.trimMargin().toStation()
+            assertThat(
+                sort(input.location, input.sees),
+                equalTo(
+                    listOf(
+                        Coordinate(x = 2, y = 2),
+                        Coordinate(x = 5, y = 3),
+                        Coordinate(x = 5, y = 5),
+                        Coordinate(x = 4, y = 5),
+                        Coordinate(x = 2, y = 4)
+                    )
+                )
+            )
+        }
+
+        @Test
+        internal fun `it handles non angles over 180`() {
+            val input = """
+                |.........
+                |.........
+                |....O....
+                |#...#....
+                |#........
+                |..##.....
+            """.trimMargin().toStation()
+            assertThat(
+                sort(input.location, input.sees),
+                equalTo(
+                    listOf(
+                        Coordinate(x = 4, y = 3),
+                        Coordinate(x = 3, y = 5),
+                        Coordinate(x = 2, y = 5),
+                        Coordinate(x = 0, y = 4),
+                        Coordinate(x = 0, y = 3)
+                    )
+                )
+            )
+        }
+
+        @Test
+        internal fun `it handles non angles over 270`() {
+            val input = """
+                |...#.....
+                |..#......
+                |.##......
+                |.#..O....
+                |.........
+                |.........
+                |.........
+            """.trimMargin().toStation()
+            assertThat(
+                sort(input.location, input.sees),
+                equalTo(
+                    listOf(
+                        Coordinate(x = 1, y = 3),
+                        Coordinate(x = 1, y = 2),
+                        Coordinate(x = 2, y = 2),
+                        Coordinate(x = 2, y = 1),
+                        Coordinate(x = 3, y = 0)
+                    )
+                )
+            )
+        }
+
+        @Test
+        internal fun part2() {
+            val (location, sees) = findMonitoringStation(input)
+            assertThat(sort(location, sees)[199], equalTo(Coordinate(13, 9)))
+        }
+    }
+
+}
+
+private fun String.toStation(): Station {
+    return Station(locateStation(this), this.parse())
+}
+
+fun locateStation(rawMap: String): Coordinate {
+    val (y, row) = rawMap.split('\n')
+        .mapIndexed { i, row -> i to row }
+        .first { (_, row) -> row.contains('O') }
+    val x = row.mapIndexed { i, c -> i to c }
+        .find { it.second == 'O' }?.first ?: throw IllegalStateException("No 'O' in the map")
+    return Coordinate(x, y)
+
 
 }
 

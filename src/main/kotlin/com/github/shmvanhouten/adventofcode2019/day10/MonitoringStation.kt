@@ -11,9 +11,9 @@ fun findMonitoringStation(locations: Set<Coordinate>): Station {
 
 }
 
-fun findLocationsItCanSee(location: Coordinate, locations: Set<Coordinate>): List<Coordinate> {
+fun findLocationsItCanSee(location: Coordinate, locations: Set<Coordinate>): Set<Coordinate> {
 
-    val sees = mutableListOf<Coordinate>()
+    val sees = mutableSetOf<Coordinate>()
     for (coordinate in locations.sortedBy { it.distanceFrom(location) }) {
         if (noBlockages(coordinate, location, sees)) {
             sees += coordinate
@@ -22,15 +22,15 @@ fun findLocationsItCanSee(location: Coordinate, locations: Set<Coordinate>): Lis
     return sees
 }
 
-fun noBlockages(coordinate1: Coordinate, coordinate2: Coordinate, sees: List<Coordinate>): Boolean {
+fun noBlockages(coordinate1: Coordinate, coordinate2: Coordinate, sees: Set<Coordinate>): Boolean {
     return sees.none { it.blocks(coordinate1, coordinate2) }
 }
 
-fun toStation(pair: Pair<Coordinate, List<Coordinate>>): Station {
+fun toStation(pair: Pair<Coordinate, Set<Coordinate>>): Station {
     return Station(pair.first, pair.second)
 }
 
-data class Station(val location: Coordinate, val sees: List<Coordinate>)
+data class Station(val location: Coordinate, val sees: Set<Coordinate>)
 
 private fun Coordinate.distanceFrom(other: Coordinate): Int {
     return abs(this.x - other.x) + abs(this.y - other.y)
@@ -77,9 +77,3 @@ private fun areAllOnALine(coords: List<Coordinate>): Boolean {
     return abs(coords[1].x - coords[2].x) / abs(coords[1].x - coords[0].x).toFloat() ==
             abs(coords[1].y - coords[2].y) / abs(coords[1].y - coords[0].y).toFloat()
 }
-
-// 2 4
-// 1 2
-
-// 3 6
-// 1 2
