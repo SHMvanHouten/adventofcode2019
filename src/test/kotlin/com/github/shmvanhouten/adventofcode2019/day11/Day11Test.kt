@@ -8,7 +8,7 @@ import com.github.shmvanhouten.adventofcode2019.day02.IComputer
 import com.github.shmvanhouten.adventofcode2019.day02.IntCode
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
