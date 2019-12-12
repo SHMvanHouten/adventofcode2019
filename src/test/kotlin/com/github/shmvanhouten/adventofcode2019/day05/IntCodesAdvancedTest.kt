@@ -20,7 +20,7 @@ class IntCodesAdvancedTest {
         internal fun `instruction 3 reads the input, 4 outputs the input`() {
             val computer = Computer(IntCode(3, 0, 4, 0, 99))
             computer.run(100)
-            assertThat(computer.output, equalTo(listOf(100L)))
+            assertThat(computer.output.toList(), equalTo(listOf(100L)))
         }
 
         @Test

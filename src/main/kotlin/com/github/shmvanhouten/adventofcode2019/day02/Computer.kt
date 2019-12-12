@@ -18,16 +18,22 @@ private const val POSITION_MODE = '0'
 private const val IMMEDIATE_MODE = '1'
 private const val RELATIVE_MODE = '2'
 
-class Computer(val intCode: IntCode) {
+interface IComputer {
+    val output: Queue<Long>
+
+    fun run(input: Long = 0): ExecutionType
+}
+
+class Computer(val intCode: IntCode) : IComputer {
     private val intCodes = intCode.ints.mapIndexed { i, value -> i.toLong() to value }.toMap().toMutableMap()
     private val inputs: Queue<Long> = LinkedList()
-    val output = mutableListOf<Long>()
+    override val output: Queue<Long> = LinkedList<Long>()
 
     private var execution = RUN
     private var pointer: Long = 0
     private var relativeBase: Long = 0
 
-    fun run(input: Long = 0): ExecutionType {
+    override fun run(input: Long): ExecutionType {
         inputs.add(input)
         execution = RUN
         while (execution == RUN) {
@@ -183,7 +189,8 @@ class Computer(val intCode: IntCode) {
         when (mode) {
             IMMEDIATE_MODE -> parameter
             RELATIVE_MODE -> intCodes[relativeBase + parameter] ?: 0
-            else -> intCodes[parameter] ?: 0
+            POSITION_MODE -> intCodes[parameter] ?: 0
+            else -> throw IllegalStateException("$mode mode is not supported")
         }
 
     private fun getTargetIndex(param: Long, mode: Char): Long =

@@ -60,7 +60,7 @@ class Day09Test {
             val computer = Computer(intCode)
             computer.run()
             assertThat(
-                computer.output,
+                computer.output.toList(),
                 equalTo(listOf(109, 1, 204, -1L, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99))
             )
         }

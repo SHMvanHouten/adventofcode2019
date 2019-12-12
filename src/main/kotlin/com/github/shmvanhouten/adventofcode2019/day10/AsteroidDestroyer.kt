@@ -6,7 +6,6 @@ import java.lang.Math.toDegrees
 import kotlin.math.abs
 import kotlin.math.atan2
 
-
 fun sort(station: Coordinate, asteroids: Collection<Coordinate>): List<Coordinate> {
     return asteroids.sortedBy { angleFromStation(station, it) }
 }
