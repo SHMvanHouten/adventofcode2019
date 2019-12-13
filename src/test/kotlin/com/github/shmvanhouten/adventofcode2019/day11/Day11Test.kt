@@ -2,16 +2,13 @@ package com.github.shmvanhouten.adventofcode2019.day11
 
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Coordinate
 import com.github.shmvanhouten.adventofcode2019.day02.Computer
-import com.github.shmvanhouten.adventofcode2019.day02.ExecutionType
-import com.github.shmvanhouten.adventofcode2019.day02.ExecutionType.REQUIRES_INPUT
-import com.github.shmvanhouten.adventofcode2019.day02.IComputer
 import com.github.shmvanhouten.adventofcode2019.day02.IntCode
+import com.github.shmvanhouten.adventofcode2019.util.FakeComputer
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.util.*
 
 private const val WHITE = 1L
 private const val BLACK = 0L
@@ -162,17 +159,6 @@ class Day11Test {
 
         }
         return Pair(panels, painted)
-    }
-}
-
-class FakeComputer : IComputer {
-    override val output: Queue<Long> = LinkedList<Long>()
-
-    val inputs = LinkedList<Long>()
-
-    override fun run(input: Long): ExecutionType {
-        inputs += input
-        return REQUIRES_INPUT
     }
 }
 

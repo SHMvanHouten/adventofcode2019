@@ -42,6 +42,14 @@ class Computer(val intCode: IntCode) : IComputer {
         return execution
     }
 
+    fun run(): ExecutionType {
+        execution = RUN
+        while (execution == RUN) {
+            pointer = execute(pointer)
+        }
+        return execution
+    }
+
     fun getIntCodes(): List<Long> {
         return intCodes.values.toList()
     }

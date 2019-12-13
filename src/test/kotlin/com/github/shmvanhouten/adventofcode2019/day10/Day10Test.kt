@@ -3,7 +3,6 @@ package com.github.shmvanhouten.adventofcode2019.day10
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Coordinate
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.junit.Ignore
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -242,7 +241,6 @@ class Day10Test {
         }
 
         @Test
-        @Ignore("takes 2 seconds")
         internal fun `testInput 4`() {
             val input = """
                         |.#..##.###...#######
@@ -276,7 +274,6 @@ class Day10Test {
         }
 
         @Test
-        @Ignore("takes 2 seconds")
         internal fun `part 1`() {
 //            val (location, sees) = findMonitoringStation(input)
 //            println(location)
@@ -420,7 +417,6 @@ class Day10Test {
         }
 
         @Test
-        @Ignore("takes 2 seconds")
         internal fun part2() {
 //            val (location, sees) = findMonitoringStation(input)
 //            assertThat(sort(location, sees)[199], equalTo(Coordinate(13, 9)))
