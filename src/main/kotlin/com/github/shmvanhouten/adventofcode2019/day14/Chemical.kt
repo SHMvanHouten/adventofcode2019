@@ -25,34 +25,35 @@ fun toReactionComponent(rawComponent: String): ReactionComponent {
 
 data class Reaction(val reactors: List<ReactionComponent>, val produces: ReactionComponent)
 
-data class ReactionComponent(val chemical: Chemical, val needed: Long) {
+data class ReactionComponent(val chemical: Chemical, val amountPerReaction: Long) {
+
+    fun isNotReactorOf(
+        chemicals: List<ReactionComponent>,
+        reactions: Map<Chemical, Reaction>
+    ): Boolean =
+        chemicals.none {
+            it.flatMapReactors(reactions)
+                .map { r -> r.chemical }
+                .contains(this.chemical)
+        }
 
     private fun flatMapReactors(reactions: Map<Chemical, Reaction>): MutableList<ReactionComponent> {
-        val reaction = reactions[this.chemical] ?: return mutableListOf()
-        val reactors = reaction.reactors.toMutableList()
-        var lastAddedReactors = reactors
-            .mapNotNull { reactions[it.chemical] }
-            .flatMap { it.reactors }
-        while(lastAddedReactors.isNotEmpty()) {
-            reactors += lastAddedReactors
-            lastAddedReactors = lastAddedReactors
-                .mapNotNull { reactions[it.chemical] }
-                .flatMap { it.reactors }
+        var nextReactors = reactions[this.chemical]?.reactors?: return mutableListOf()
+        val reactors = nextReactors.toMutableList()
+        while (nextReactors.isNotEmpty()) {
+            reactors += nextReactors
+            nextReactors = findAllReactorsForReactors(nextReactors, reactions)
         }
         return reactors
     }
 
-    fun isNotReactorOf(
-        uncreatedChemicals: MutableList<ReactionComponent>,
+    private fun findAllReactorsForReactors(
+        reactors: List<ReactionComponent>,
         reactions: Map<Chemical, Reaction>
-    ): Boolean {
-        return (uncreatedChemicals - this)
-            .none {
-                it.flatMapReactors(reactions)
-                    .map { r -> r.chemical }
-                    .contains(this.chemical)
-            }
-    }
+    ): List<ReactionComponent> =
+        reactors
+            .mapNotNull { reactions[it.chemical] }
+            .flatMap { it.reactors }
 }
 
 

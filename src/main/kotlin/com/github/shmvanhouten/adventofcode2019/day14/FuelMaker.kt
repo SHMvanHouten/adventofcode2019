@@ -11,21 +11,16 @@ class FuelMaker(chemicalReactions: List<Reaction>) {
         var uncreatedChemicals = mutableListOf(ReactionComponent("FUEL", amountOfFuel))
 
         while (uncreatedChemicals.isNotEmpty()) {
-            val (chemical, needed) = findAndRemoveFirstThatIsNotAReactorOfTheOthers(uncreatedChemicals)
+            uncreatedChemicals = uncreatedChemicals.mergeOnChemical()
+            val (chemical, amountRequired) = takeFirstThatIsNotAReactorOfTheRest(uncreatedChemicals)
 
             if (chemical == "ORE") {
-                return needed
-
+                return amountRequired
             } else {
-                val (reactors, product) = reactions[chemical]!!
-                val createdPerReaction = product.needed
-                reactors
-                    .map { chemicalToAmountNeeded(it, divideRoundedUp(needed, createdPerReaction)) }
-                    .forEach { (reactor, amountNeeded) ->
-                        uncreatedChemicals.add(ReactionComponent(reactor, amountNeeded))
-                    }
+                uncreatedChemicals.addAll(
+                    findAllReactorsForProduct(chemical, amountRequired)
+                )
             }
-            uncreatedChemicals = uncreatedChemicals.mergeOnChemical()
         }
 
         throw IllegalStateException("No ORE found")
@@ -44,20 +39,29 @@ class FuelMaker(chemicalReactions: List<Reaction>) {
                 else -> minInput = fuelInput
             }
         }
-
     }
 
-    private fun findAndRemoveFirstThatIsNotAReactorOfTheOthers(uncreatedChemicals: MutableList<ReactionComponent>): ReactionComponent {
-        val first = uncreatedChemicals.first {
-            it.isNotReactorOf(uncreatedChemicals, reactions)
+    private fun findAllReactorsForProduct(chemical: Chemical, amountRequired: Long): List<ReactionComponent> {
+        val (reactors, product) = reactions[chemical]!!
+        return reactors.map { toReactionComponent(it, amountRequired, product.amountPerReaction) }
+    }
+
+    private fun takeFirstThatIsNotAReactorOfTheRest(chemicals: MutableList<ReactionComponent>): ReactionComponent {
+        val chemical = chemicals.first {
+            it.isNotReactorOf(chemicals - it, reactions)
         }
-        uncreatedChemicals.remove(first)
-        return first
+        chemicals.remove(chemical)
+        return chemical
     }
 
-    private fun chemicalToAmountNeeded(reactor: ReactionComponent, multiplicant: Long): Pair<Chemical, Long> {
-        return reactor.chemical to reactor.needed * multiplicant
-    }
+    private fun toReactionComponent(
+        reactor: ReactionComponent,
+        productRequired: Long,
+        createdPerReaction: Long
+    ): ReactionComponent = ReactionComponent(
+        reactor.chemical,
+        reactor.amountPerReaction * divideRoundedUp(productRequired, createdPerReaction)
+    )
 
     private fun divideRoundedUp(actuallyNeeded: Long, createdPerReaction: Long) =
         ceil(actuallyNeeded / createdPerReaction.toDouble()).toLong()
@@ -67,7 +71,7 @@ class FuelMaker(chemicalReactions: List<Reaction>) {
 private fun MutableList<ReactionComponent>.mergeOnChemical(): MutableList<ReactionComponent> {
     val chemicalToAmount = this.map { it.chemical to 0L }.toMap().toMutableMap()
     this.forEach { component ->
-        chemicalToAmount.merge(component.chemical, component.needed) { t, u -> t + u }
+        chemicalToAmount.merge(component.chemical, component.amountPerReaction, Long::plus)
     }
-    return chemicalToAmount.entries.map { ReactionComponent(it.key, it.value.toLong()) }.toMutableList()
+    return chemicalToAmount.entries.map { ReactionComponent(it.key, it.value) }.toMutableList()
 }
