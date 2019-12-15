@@ -12,13 +12,15 @@ class FuelMaker(chemicalReactions: List<Reaction>) {
 
         while (uncreatedChemicals.isNotEmpty()) {
             val (chemical, needed) = findAndRemoveFirstThatIsNotAReactorOfTheOthers(uncreatedChemicals)
+
             if (chemical == "ORE") {
                 return needed
+
             } else {
                 val (reactors, product) = reactions[chemical]!!
                 val createdPerReaction = product.needed
                 reactors
-                    .map { countReactorsNeeded(it, divideRoundedUp(needed, createdPerReaction)) }
+                    .map { chemicalToAmountNeeded(it, divideRoundedUp(needed, createdPerReaction)) }
                     .forEach { (reactor, amountNeeded) ->
                         uncreatedChemicals.add(ReactionComponent(reactor, amountNeeded))
                     }
@@ -53,7 +55,7 @@ class FuelMaker(chemicalReactions: List<Reaction>) {
         return first
     }
 
-    private fun countReactorsNeeded(reactor: ReactionComponent, multiplicant: Long): Pair<Chemical, Long> {
+    private fun chemicalToAmountNeeded(reactor: ReactionComponent, multiplicant: Long): Pair<Chemical, Long> {
         return reactor.chemical to reactor.needed * multiplicant
     }
 

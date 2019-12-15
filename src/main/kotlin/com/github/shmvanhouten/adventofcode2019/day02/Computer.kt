@@ -22,16 +22,31 @@ interface IComputer {
     val output: Queue<Long>
 
     fun run(input: Long = 0): ExecutionType
+    fun copy(): IComputer
 }
 
-class Computer(val intCode: IntCode) : IComputer {
-    private val intCodes = intCode.ints.mapIndexed { i, value -> i.toLong() to value }.toMap().toMutableMap()
-    private val inputs: Queue<Long> = LinkedList()
+class Computer(
+    val intCode: IntCode,
+    private var pointer: Long = 0,
+    private var relativeBase: Long = 0,
+    private var execution: ExecutionType = RUN,
+    private val inputs: Queue<Long> = LinkedList(),
     override val output: Queue<Long> = LinkedList<Long>()
+) : IComputer {
 
-    private var execution = RUN
-    private var pointer: Long = 0
-    private var relativeBase: Long = 0
+    private val intCodes = intCode.ints.toMutableMap()
+
+    override fun copy(): Computer {
+        val intCode = IntCode(intCodes)
+        return Computer(
+            intCode,
+            this.pointer,
+            this.relativeBase,
+            this.execution,
+            this.inputs,
+            this.output
+        )
+    }
 
     override fun run(input: Long): ExecutionType {
         inputs.add(input)

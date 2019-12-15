@@ -15,4 +15,8 @@ class FakeComputer : IComputer {
         inputs += input
         return executionType
     }
+
+    override fun copy(): IComputer {
+        return this
+    }
 }
