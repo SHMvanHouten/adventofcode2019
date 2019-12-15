@@ -6,12 +6,12 @@ import com.github.shmvanhouten.adventofcode2019.day02.IComputer
 
 class RepairDroid(private val computer: IComputer, val location: Coordinate) {
 
-    fun move(direction: Direction): Pair<Int, RepairDroid?> {
+    fun move(direction: Direction): Pair<Int, RepairDroid>? {
         val newComputer = computer.copy()
         newComputer.run(toComputerInstruction(direction))
         val output = computer.output.poll()
         return when(output) {
-            0L -> 0 to null
+            0L -> null
             1L -> 1 to RepairDroid(newComputer, location.move(direction))
             2L -> 2 to RepairDroid(newComputer, location.move(direction))
             else -> throw IllegalStateException("unexpected output: $output")

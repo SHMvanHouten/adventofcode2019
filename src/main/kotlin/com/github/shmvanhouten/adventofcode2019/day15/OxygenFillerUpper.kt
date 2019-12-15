@@ -6,27 +6,43 @@ import com.github.shmvanhouten.adventofcode2019.day02.Computer
 import com.github.shmvanhouten.adventofcode2019.day02.IntCode
 
 fun calculateTimeNeededToFillUp(intCode: IntCode): Int {
-    val (pathToMachine, map) = PathFinder().findPathAndMap(
-        RepairDroid(Computer(intCode), Coordinate(0, 0))
-    )
-    val oxygenMachine = pathToMachine.last()
+    val (map, oxygenMachine) = exploreMapAndFindOxygenMachine(intCode)
+
     val unfilledSpaces = (map - oxygenMachine).toMutableSet()
     var nextNodes = setOf(oxygenMachine)
     val oxygenatedSpaces = nextNodes.toMutableSet()
     var minutes = 0
-    while (nextNodes.isNotEmpty()) {
-        unfilledSpaces -= nextNodes
-        nextNodes = nextNodes.flatMap { node ->
-            Direction.values().map { node.move(it) }
-        }.filter { unfilledSpaces.contains(it) }
-            .toSet()
+    while (unfilledSpaces.isNotEmpty()) {
+        nextNodes = findAdjoiningUnoxyginatedSpaces(nextNodes, unfilledSpaces)
         oxygenatedSpaces.addAll(nextNodes)
+        unfilledSpaces -= nextNodes
         minutes++
-//        println(minutes)
 //        println(draw(unfilledSpaces, oxygenatedSpaces))
     }
     return minutes
 }
+
+private fun exploreMapAndFindOxygenMachine(intCode: IntCode): Pair<MutableSet<Coordinate>, Coordinate> {
+    val (pathToMachine, map) = PathFinder().findPathAndMap(
+        RepairDroid(Computer(intCode), Coordinate(0, 0))
+    )
+    return map to pathToMachine.last()
+}
+
+private fun findAdjoiningUnoxyginatedSpaces(
+    nextNodes: Set<Coordinate>,
+    unfilledSpaces: MutableSet<Coordinate>
+): Set<Coordinate> {
+    var nextNodes1 = nextNodes
+    nextNodes1 = nextNodes1
+        .flatMap { node -> moveInAllDirections(node) }
+        .filter { unfilledSpaces.contains(it) }
+        .toSet()
+    return nextNodes1
+}
+
+private fun moveInAllDirections(node: Coordinate) =
+    Direction.values().map { node.move(it) }
 
 private fun draw(
     coordinates: Collection<Coordinate>,

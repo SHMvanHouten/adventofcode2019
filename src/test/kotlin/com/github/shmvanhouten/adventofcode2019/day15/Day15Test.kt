@@ -38,7 +38,7 @@ class Day15Test {
 
                 val droid = RepairDroid(computer, Coordinate(0, 0))
 
-                val (returnCode, resultDroid) = droid.move(Direction.NORTH)
+                val (returnCode, resultDroid) = droid.move(Direction.NORTH)!!
 
                 assertThat(returnCode, equalTo(1))
                 assertThat(resultDroid!!.location, equalTo(Coordinate(0, -1)))

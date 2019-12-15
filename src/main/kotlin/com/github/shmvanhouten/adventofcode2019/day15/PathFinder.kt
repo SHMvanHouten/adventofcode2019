@@ -6,31 +6,21 @@ import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Direction
 class PathFinder {
 
     fun findPathAndMap(startingDroid: RepairDroid): Pair<List<Coordinate>, MutableSet<Coordinate>> {
-        val unvisitedNodes = mutableListOf(DroidNode(startingDroid, listOf()))
+        val unvisitedNodes = mutableListOf(Node(startingDroid, listOf()))
         val visitedLocations = mutableSetOf<Coordinate>()
         var pathToTarget = listOf<Coordinate>()
 
         while (unvisitedNodes.isNotEmpty()) {
             unvisitedNodes.sort()
-            val first = unvisitedNodes.first()
-            unvisitedNodes.remove(first)
-            visitedLocations.add(first.droid.location)
+            val node = unvisitedNodes.removeAt(0)
+            val droid = node.droid
+            visitedLocations.add(droid.location)
 
-            val (droid, path) = first
-
-            if(pathToTarget.isEmpty()) {
-                val targetLocation = findTargetLocation(droid)
-                if (targetLocation != null) {
-                    pathToTarget = path + targetLocation
-                }
+            if(node.hasOxygenMachine) {
+                pathToTarget = node.path
             }
 
-            val newNodes = Direction.values()
-                .map { droid.move(it) }
-                .mapNotNull { it.second }
-                .filter { locationWasNotVisited(visitedLocations, it) }
-                .map { DroidNode(it, path + it.location) }
-
+            val newNodes = moveToNewLocations(droid, visitedLocations, node.path)
             unvisitedNodes.addAll(newNodes)
         }
 
@@ -38,11 +28,21 @@ class PathFinder {
         return pathToTarget to visitedLocations
     }
 
-    private fun findTargetLocation(droid: RepairDroid): Coordinate? {
+    private fun moveToNewLocations(
+        droid: RepairDroid,
+        visitedLocations: MutableSet<Coordinate>,
+        path: List<Coordinate>
+    ): List<Node> {
         return Direction.values()
-            .map { droid.move(it) }
-            .find { it.first == 2 }?.second?.location
+            .mapNotNull { droid.move(it) }
+            .filter { locationWasNotVisited(visitedLocations, it.second) }
+            .map { toNode(it, path) }
     }
+
+    private fun toNode(
+        it: Pair<Int, RepairDroid>,
+        path: List<Coordinate>
+    ) = Node(it.second, path + it.second.location, it.first == 2)
 
     private fun locationWasNotVisited(
         visitedLocations: MutableSet<Coordinate>,
@@ -50,8 +50,13 @@ class PathFinder {
     ) = visitedLocations.none { droid.location == it }
 }
 
-data class DroidNode(val droid: RepairDroid, val path: List<Coordinate>) : Comparable<DroidNode> {
-    override fun compareTo(other: DroidNode): Int {
+data class Node(
+    val droid: RepairDroid,
+    val path: List<Coordinate>,
+    val hasOxygenMachine: Boolean = false
+) : Comparable<Node> {
+
+    override fun compareTo(other: Node): Int {
         if (this.path.size == other.path.size) {
             return this.droid.location.compareTo(other.droid.location)
         }
