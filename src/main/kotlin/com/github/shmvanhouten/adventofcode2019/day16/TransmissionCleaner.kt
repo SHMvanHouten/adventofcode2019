@@ -9,25 +9,52 @@ fun cleanUpSignal(dirtySignal: String, phases: Int): String {
         .fold(dirtySignal.map { toInt(it) }) {
                 signal, _ -> cleanupPhase(signal, dirtySignal.length)
         }
-        .joinToString("").substring(0, 8)
-
+        .joinToString("")
 }
 
 private fun cleanupPhase(dirtySignal: List<Int>, length: Int): List<Int> {
     return (1..length).map { i ->
-        val pattern: List<Int> = 0.repeat(i) + 1.repeat(i) + 0.repeat(i) + (-1).repeat(i)
-        val result = generateSequence { pattern }.flatten().drop(1)
+        val pattern: List<Int> = listOf(0, 1, 0, -1)
+        val result = generateSequence { pattern }.flatten()
             .asIterable()
-            .zip(dirtySignal)
-            .sumBy { (p, s) -> p * s }
+            .zip(chunkedWithLessChunkForFirst(dirtySignal, i))
+            .filter { it.first != 0 }
+            .sumBy { (p, s) -> p * s.sum() }
         abs(result % 10)
     }
 }
 
-private fun Int.repeat(i: Int): List<Int> {
-    return 0.until(i).map { this }
+private fun chunkedWithLessChunkForFirst(
+    dirtySignal: List<Int>,
+    i: Int
+): List<List<Int>> {
+    val take = dirtySignal.take(i - 1)
+    val drop = dirtySignal.drop(i - 1)
+    return listOf(take) + drop.chunked(i)
 }
 
-fun toInt(it: Char): Int {
+private fun toInt(it: Char): Int {
     return it.toInt() - ZERO_ASCII
+}
+
+// PART 2
+
+fun quickFind(input: String): String {
+    val offset = input.substring(0,7).toInt()
+    var result = input.toCharArray().map { toInt(it) }.reversed()
+    repeat(100) {
+        result = doTheBackwardPattern(result)
+    }
+
+    return result.joinToString("").reversed().substring(offset, offset + 8)
+}
+
+
+private fun doTheBackwardPattern(input: List<Int>): List<Int> {
+    var accumulator = 0
+    return input.map {
+        accumulator += it
+        accumulator %= 10
+        accumulator
+    }
 }

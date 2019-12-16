@@ -13,17 +13,45 @@ class Day16Test {
 
         @Test
         internal fun `testInput`() {
-            assertThat(cleanUpSignal("12345678", 1), equalTo("48226158"))
-            assertThat(cleanUpSignal("12345678", 2), equalTo("34040438"))
-            assertThat(cleanUpSignal("12345678", 3), equalTo("03415518"))
-            assertThat(cleanUpSignal("12345678", 4), equalTo("01029498"))
-            assertThat(cleanUpSignal("80871224585914546619083218645595", 100), equalTo("24176176"))
-            assertThat(cleanUpSignal("19617804207202209144916044189917", 100), equalTo("73745418"))
-            assertThat(cleanUpSignal("69317163492948606335995924319873", 100), equalTo("52432133"))
+            assertThat(cleanUpSignal("12345678", 1).substring(0, 8), equalTo("48226158"))
+            assertThat(cleanUpSignal("12345678", 2).substring(0, 8), equalTo("34040438"))
+            assertThat(cleanUpSignal("12345678", 3).substring(0, 8), equalTo("03415518"))
+            assertThat(cleanUpSignal("12345678", 4).substring(0, 8), equalTo("01029498"))
+            assertThat(cleanUpSignal("80871224585914546619083218645595", 100).substring(0, 8), equalTo("24176176"))
+            assertThat(cleanUpSignal("19617804207202209144916044189917", 100).substring(0, 8), equalTo("73745418"))
+            assertThat(cleanUpSignal("69317163492948606335995924319873", 100).substring(0, 8), equalTo("52432133"))
         }
 
-    @Test
-    internal fun part1() {
-        assertThat(cleanUpSignal(input, 100).substring(0, 8), equalTo("70856418"))
+        @Test
+        internal fun part1() {
+            assertThat(cleanUpSignal(input, 100).substring(0, 8), equalTo("70856418"))
+        }
+
     }
+
+    @Nested
+    inner class Part2 {
+
+        @Test
+        fun testInput1 () {
+            assertThat(quickFind("03036732577212944063491565474664".repeat(10000)), equalTo("84462026"))
+        }
+
+        @Test
+        fun testInput2 () {
+            assertThat(quickFind("02935109699940807407585447034323".repeat(10000)), equalTo("78725270"))
+        }
+
+        @Test
+        fun testInput3 () {
+            assertThat(quickFind("03081770884921959731165446850517".repeat(10000)), equalTo("53553731"))
+        }
+
+        @Test
+        internal fun part2() {
+            assertThat(quickFind(input.repeat(10000)), equalTo("87766336"))
+        }
+    }
+
+
 }
