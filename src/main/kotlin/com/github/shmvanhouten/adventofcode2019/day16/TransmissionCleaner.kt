@@ -41,14 +41,13 @@ private fun toInt(it: Char): Int {
 
 fun quickFind(input: String): String {
     val offset = input.substring(0,7).toInt()
-    var result = input.toCharArray().map { toInt(it) }.reversed()
+    var result = input.substring(offset).toCharArray().map { toInt(it) }.reversed()
     repeat(100) {
         result = doTheBackwardPattern(result)
     }
 
-    return result.joinToString("").reversed().substring(offset, offset + 8)
+    return result.joinToString("").reversed().substring(0, 8)
 }
-
 
 private fun doTheBackwardPattern(input: List<Int>): List<Int> {
     var accumulator = 0
