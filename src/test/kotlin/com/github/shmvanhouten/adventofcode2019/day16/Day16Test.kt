@@ -34,22 +34,22 @@ class Day16Test {
 
         @Test
         fun testInput1 () {
-            assertThat(quickFind("03036732577212944063491565474664".repeat(10000)), equalTo("84462026"))
+            assertThat(findMessageAtOffset("03036732577212944063491565474664".repeat(10000)), equalTo("84462026"))
         }
 
         @Test
         fun testInput2 () {
-            assertThat(quickFind("02935109699940807407585447034323".repeat(10000)), equalTo("78725270"))
+            assertThat(findMessageAtOffset("02935109699940807407585447034323".repeat(10000)), equalTo("78725270"))
         }
 
         @Test
         fun testInput3 () {
-            assertThat(quickFind("03081770884921959731165446850517".repeat(10000)), equalTo("53553731"))
+            assertThat(findMessageAtOffset("03081770884921959731165446850517".repeat(10000)), equalTo("53553731"))
         }
 
         @Test
         internal fun part2() {
-            assertThat(quickFind(input.repeat(10000)), equalTo("87766336"))
+            assertThat(findMessageAtOffset(input.repeat(10000)), equalTo("87766336"))
         }
     }
 

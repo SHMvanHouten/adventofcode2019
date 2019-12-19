@@ -39,9 +39,9 @@ private fun toInt(it: Char): Int {
 
 // PART 2
 
-fun quickFind(input: String): String {
+fun findMessageAtOffset(input: String): String {
     val offset = input.substring(0,7).toInt()
-    var result = input.substring(offset).toCharArray().map { toInt(it) }.reversed()
+    var result = input.substring(offset).map { toInt(it) }.reversed()
     repeat(100) {
         result = doTheBackwardPattern(result)
     }
