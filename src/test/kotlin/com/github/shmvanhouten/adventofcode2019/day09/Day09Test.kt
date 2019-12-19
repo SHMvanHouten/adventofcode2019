@@ -87,7 +87,7 @@ class Day09Test {
         internal fun `part 1`() {
             val intCode = IntCode(input)
             val computer = Computer(intCode)
-            computer.run(1L)
+            computer.input(1L)
             assertThat(computer.output.first(), equalTo(2453265701L))
         }
     }
@@ -96,7 +96,7 @@ class Day09Test {
     internal fun `part 2`() {
         val intCode = IntCode(input)
         val computer = Computer(intCode)
-        computer.run(2L)
+        computer.input(2L)
         assertThat(computer.output.first(), equalTo(80805L))
     }
 }

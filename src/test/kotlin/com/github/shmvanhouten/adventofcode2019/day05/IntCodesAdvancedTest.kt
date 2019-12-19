@@ -19,7 +19,7 @@ class IntCodesAdvancedTest {
         @Test
         internal fun `instruction 3 reads the input, 4 outputs the input`() {
             val computer = Computer(IntCode(3, 0, 4, 0, 99))
-            computer.run(100)
+            computer.input(100)
             assertThat(computer.output.toList(), equalTo(listOf(100L)))
         }
 
@@ -34,7 +34,7 @@ class IntCodesAdvancedTest {
         @Test
         internal fun part1() {
             val computer = Computer( IntCode(input))
-            computer.run(1)
+            computer.input(1)
             println(computer.output)
             assertThat(computer.output.last(), equalTo(5821753L))
         }
@@ -97,10 +97,10 @@ class IntCodesAdvancedTest {
             internal fun `some test values`() {
                 val intCode = IntCode(3L, 9L, 8L, 9L, 10L, 9L, 4L, 9L, 99L, -1L, 8)
                 val computer1 = Computer(intCode)
-                computer1.run(8)
+                computer1.input(8)
                 assertThat(computer1.output.first(), equalTo(1L))
                 val computer2 = Computer(intCode)
-                computer2.run(7)
+                computer2.input(7)
                 assertThat(computer2.output.first(), equalTo(0L))
             }
         }
@@ -110,10 +110,10 @@ class IntCodesAdvancedTest {
             //Here are some jump tests that take an input, then output 0 if the input was zero or 1 if the input was non-zero
             val intCode = IntCode(3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9)
             val computer1 = Computer(intCode)
-            computer1.run(0)
+            computer1.input(0)
             assertThat(computer1.output.first(), equalTo(0L))
             val computer2 = Computer(intCode)
-            computer2.run(99)
+            computer2.input(99)
             assertThat(computer2.output.first(), equalTo(1L))
 
         }
@@ -140,7 +140,7 @@ class IntCodesAdvancedTest {
         @Test
         internal fun `part 2`() {
             val computer = Computer(IntCode(input))
-            computer.run(5)
+            computer.input(5)
             println(computer.output)
             assertThat(computer.output.first(), equalTo(11956381L))
         }
@@ -151,7 +151,7 @@ class IntCodesAdvancedTest {
             expected: Long
         ) {
             val computer = Computer(intCode)
-            computer.run(input)
+            computer.input(input)
             assertThat(computer.output.first(), equalTo(expected))
         }
     }

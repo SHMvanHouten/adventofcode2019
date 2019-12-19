@@ -11,7 +11,7 @@ class FakeComputer : IComputer {
 
     var executionType = ExecutionType.REQUIRES_INPUT
 
-    override fun run(input: Long): ExecutionType {
+    override fun input(input: Long): ExecutionType {
         inputs += input
         return executionType
     }

@@ -8,7 +8,7 @@ class RepairDroid(private val computer: IComputer, val location: Coordinate) {
 
     fun move(direction: Direction): Pair<Int, RepairDroid>? {
         val newComputer = computer.copy()
-        newComputer.run(toComputerInstruction(direction))
+        newComputer.input(toComputerInstruction(direction))
         val output = computer.output.poll()
         return when(output) {
             0L -> null

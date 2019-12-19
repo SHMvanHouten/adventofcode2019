@@ -22,7 +22,7 @@ fun computeFeedbackedThrusterSignal(
     var input = 0L
     while (runResult != STOP) {
         for (computer in computers) {
-            runResult = computer.run(input)
+            runResult = computer.input(input)
             input = computer.output.last()
         }
     }
@@ -41,7 +41,7 @@ fun computeThrusterSignal(intCode: IntCode, thrusterSettings: List<Long>): Long 
 
     var input = 0L
     for (computer in computers) {
-        computer.run(input)
+        computer.input(input)
         input = computer.output.last()
     }
     return input
@@ -53,7 +53,7 @@ private fun setUp(
 ): List<Computer> {
     return thrusterSettings.map { thrusterSetting ->
         val computer = Computer(intCode)
-        computer.run(thrusterSetting)
+        computer.input(thrusterSetting)
         computer
     }
 }

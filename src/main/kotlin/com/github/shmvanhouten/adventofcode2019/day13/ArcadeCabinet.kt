@@ -29,9 +29,9 @@ class ArcadeCabinet(private val computer: IComputer) {
 
     fun draw(): MutableMap<Coordinate, Tile> {
         when {
-            ballX < paddleX -> computer.run(-1)
-            paddleX < ballX -> computer.run(1)
-            else -> computer.run(0)
+            ballX < paddleX -> computer.input(-1)
+            paddleX < ballX -> computer.input(1)
+            else -> computer.input(0)
         }
 
         val output = computer.output
@@ -57,7 +57,7 @@ class ArcadeCabinet(private val computer: IComputer) {
     }
 
     fun drawInitialBoard(): MutableMap<Coordinate, Tile> {
-        computer.run()
+        computer.input()
         val output = computer.output
         while (hasOutput(output)) {
             val coordinate = Coordinate(output.poll().toInt(), output.poll().toInt())

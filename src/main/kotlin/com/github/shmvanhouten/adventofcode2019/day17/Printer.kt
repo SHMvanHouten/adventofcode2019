@@ -7,7 +7,7 @@ class Printer(val computer: IComputer) {
     fun print(): String {
         var executionType = RUN
         while (executionType == RUN) {
-            executionType = computer.run()
+            executionType = computer.input()
         }
         return computer.output.map { it.toChar() }.joinToString("")
     }

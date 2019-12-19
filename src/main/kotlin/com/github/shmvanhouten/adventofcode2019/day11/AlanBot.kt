@@ -31,9 +31,9 @@ class AlanBot(private val computer: IComputer, val panels:MutableSet<Coordinate>
 
     private fun tellComputerColor(): ExecutionType {
         return if (panels.contains(location)) {
-            computer.run(WHITE)
+            computer.input(WHITE)
         } else {
-            computer.run(BLACK)
+            computer.input(BLACK)
         }
     }
 

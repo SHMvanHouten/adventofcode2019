@@ -21,7 +21,7 @@ private const val RELATIVE_MODE = '2'
 interface IComputer {
     val output: Queue<Long>
 
-    fun run(input: Long = 0): ExecutionType
+    fun input(input: Long = 0): ExecutionType
     fun copy(): IComputer
 }
 
@@ -48,7 +48,7 @@ class Computer(
         )
     }
 
-    override fun run(input: Long): ExecutionType {
+    override fun input(input: Long): ExecutionType {
         inputs.add(input)
         execution = RUN
         while (execution == RUN) {
