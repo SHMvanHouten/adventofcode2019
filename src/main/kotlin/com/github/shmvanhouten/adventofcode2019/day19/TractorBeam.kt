@@ -41,11 +41,11 @@ private fun findFirstInRowAffectedByBeam(
     minx: Int,
     y: Int
 ): Int {
-    var minx1 = minx
-    while (!isAffected(intCode, Coordinate(minx1, y))) {
-        minx1++
+    return if (!isAffected(intCode, Coordinate(minx, y))) {
+        minx + 1
+    } else {
+        minx
     }
-    return minx1
 }
 
 private fun isAffected(
