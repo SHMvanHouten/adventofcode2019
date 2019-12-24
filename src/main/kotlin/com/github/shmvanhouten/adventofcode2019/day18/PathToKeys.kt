@@ -7,44 +7,59 @@ fun stepsRequired(input: String): Int {
 
     val (keys, vectors) = findPathBetweenEachPoint(input)
 
-    var unfinishedRoutes = mutableSetOf(Route(listOf('@'), 0))
+    val unfinishedRoutes = mutableSetOf(Route(listOf('@'), 0))
     var fastestRoute: Route? = null
 
     while (unfinishedRoutes.isNotEmpty()) {
         val route = unfinishedRoutes.minBy { it.length }!!
         val (path, length) = route
-        unfinishedRoutes.removeIf { it.path.last() == path.last() && it.path.sorted() == path.sorted() }
+        removeDuplicatePaths(unfinishedRoutes, path)
         val unvisitedKeys = keys.toSet() - getKeys(path)
         if (unvisitedKeys.isEmpty()) {
             fastestRoute = route
         } else {
-            unfinishedRoutes.addAll(unvisitedKeys
-                .map { it to findVector(path.last(), it, vectors) }
-                .filter { hasKeysForAllDoors(it.second, path) }
-                .filter { (it.second.keys - it.first).all { key -> getKeys(path).contains(key) } }
-                .map { (key, vector) -> Route(path + key, vector.path.size + length) }
-            )
+            unfinishedRoutes += listAvailableVectors(unvisitedKeys, path, vectors, length)
         }
-        unfinishedRoutes = unfinishedRoutes.filter { it.length < fastestRoute?.length ?: Int.MAX_VALUE }.toMutableSet()
+        unfinishedRoutes.removeIf { it.length >= fastestRoute?.length ?: Int.MAX_VALUE }
     }
 
-    return fastestRoute?.length ?: throw  IllegalStateException("No routes found")
+    return fastestRoute?.length ?: throw  Exception("No routes found")
 }
 
-private fun hasKeysForAllDoors(
+private fun listAvailableVectors(
+    unvisitedKeys: Set<Char>,
+    path: List<Char>,
+    vectors: MutableMap<Char, Map<Char, Vector>>,
+    length: Int
+): List<Route> {
+    return unvisitedKeys
+        .map { it to findVector(path.last(), it, vectors) }
+        .filter { hasKeysForAllDoors(it.second, path) }
+        .filter { (it.second.keys - it.first).all { key -> getKeys(path).contains(key) } }
+        .map { (key, vector) -> Route(path + key, vector.path.size + length) }
+}
+
+private fun removeDuplicatePaths(
+    unfinishedRoutes: MutableSet<Route>,
+    path: List<Char>
+) {
+    unfinishedRoutes.removeIf { it.path.last() == path.last() && it.path.sorted() == path.sorted() }
+}
+
+fun hasKeysForAllDoors(
     vector: Vector,
     path: List<Char>
 ) = vector.doors.intersect(getKeys(path).map { it.toUpperCase() }).size == vector.doors.size
 
-private fun getKeys(path: List<Char>) =
-    path.filter { it.isLowerCase() }.toSet()
+fun getKeys(path: List<Char>) =
+    path.filter { it != '@' }.toSet()
 
 fun findVector(c1: Char, c2: Char, vectors: MutableMap<Char, Map<Char, Vector>>): Vector {
     val chars = listOf(c1, c2).sorted()
     return vectors[chars[0]]!![chars[1]] ?: throw IllegalStateException("Could not find vector for keys $c1, $c2")
 }
 
-fun findPathBetweenEachPoint(input: String): Pair<Set<Char>, MutableMap<Char, Map<Char, Vector>>> {
+fun findPathBetweenEachPoint(input: String): KeysToVectorBetweenKeys {
     val (availableKeys, map) = toMazeState(input)
     val remainingKeys = (listOf('@') + availableKeys.sorted()).toMutableList()
     val vectors = mutableMapOf<Char, Map<Char, Vector>>()
@@ -67,7 +82,6 @@ private fun findPathBetweenPointAndAllOtherPoints(
         .toMap()
 }
 
-// todo: we could also make a list of vectors per path with different doors in-between
 private fun findPathBetweenPoints(
     origin: Coordinate,
     target: Coordinate,
@@ -92,10 +106,6 @@ private fun findPathBetweenPoints(
 
     }
     throw IllegalStateException("could not found route between $origin and $target")
-}
-
-private fun <E> List<E>.tail(): List<E> {
-    return this.subList(0, this.size - 1)
 }
 
 private fun toVector(
@@ -142,14 +152,11 @@ private fun isADoor(coordinate: Coordinate, map: Map<Coordinate, Char>): Boolean
         ?: throw IllegalStateException("Could not find anything at coordinate $coordinate")
 }
 
-// todo: vector and route are pretty much the same thing
-data class Vector(val path: List<Coordinate>, val doors: Set<Char>, val keys: Set<Char>)
-
 fun isAValidMove(
     coordinate: Coordinate,
     map: Map<Coordinate, Char>
 ): Boolean {
-    return map[coordinate] != '#'
+    return map[coordinate] != null && map[coordinate] != '#'
 }
 
 private fun findLocationOfKey(
@@ -170,7 +177,13 @@ fun parseMap(input: String): Map<Coordinate, Char> {
     }.flatten().toMap()
 }
 
+private fun <E> List<E>.tail(): List<E> {
+    return this.subList(0, this.size - 1)
+}
+
 data class MazeState(val keys: Set<Char>, val map: Map<Coordinate, Char>)
+
+data class Vector(val path: List<Coordinate>, val doors: Set<Char>, val keys: Set<Char>)
 
 data class Route(val path: List<Char>, val length: Int)
 
