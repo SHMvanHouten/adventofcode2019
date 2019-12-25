@@ -10,10 +10,10 @@ fun parseInstructions(input: String): List<ShuffleInstruction> {
 fun toShuffleInstruction(instruction: String): ShuffleInstruction {
     val words = instruction.split(' ')
     return when {
-        words[0] == "cut" -> ShuffleInstruction(CUT, words[1].toInt())
+        words[0] == "cut" -> ShuffleInstruction(CUT, words[1].toLong())
         words[2] == "increment" -> ShuffleInstruction(
             DEAL_WITH_INCREMENT,
-            words[3].toInt()
+            words[3].toLong()
         )
         else -> ShuffleInstruction(DEAL_INTO_NEW_STACK)
     }

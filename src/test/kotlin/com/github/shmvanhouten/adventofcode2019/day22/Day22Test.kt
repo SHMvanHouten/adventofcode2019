@@ -37,7 +37,9 @@ class Day22Test {
 
         @Test
         internal fun `no shuffle instruction gives back the deck`() {
-            assertThat(shuffle(10, emptyList()), equalTo(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)))
+            assertThat(
+                shuffleToList(10, emptyList()), equalTo(listOf(0L, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+            )
         }
 
         @Test
@@ -45,42 +47,55 @@ class Day22Test {
             val instructions = listOf(
                 ShuffleInstruction(DEAL_INTO_NEW_STACK)
             )
-            assertThat(shuffle(10, instructions), equalTo(listOf(9, 8, 7, 6, 5, 4, 3, 2, 1, 0)))
+            assertThat(
+                shuffleToList(10, instructions), equalTo(listOf(9L, 8, 7, 6, 5, 4, 3, 2, 1, 0))
+            )
+            assertThat(
+                shuffleToList(10007, instructions), equalTo(0L.until(10007L).toList().reversed())
+            )
         }
 
         @Test
         internal fun `cut n cards positive input`() {
             assertThat(
-                shuffle(10, listOf(ShuffleInstruction(CUT, 3))),
-                equalTo(listOf(3, 4, 5, 6, 7, 8, 9, 0, 1, 2))
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, 3))),
+                equalTo(listOf(3L, 4, 5, 6, 7, 8, 9, 0, 1, 2))
             )
             assertThat(
-                shuffle(10, listOf(ShuffleInstruction(CUT, 4))),
-                equalTo(listOf(4, 5, 6, 7, 8, 9, 0, 1, 2, 3))
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, 4))),
+                equalTo(listOf(4L, 5, 6, 7, 8, 9, 0, 1, 2, 3))
+            )
+            assertThat(
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, 8))),
+                equalTo(listOf(8L, 9, 0, 1, 2, 3, 4, 5, 6, 7))
             )
         }
 
         @Test
         internal fun `cut n cards negative input`() {
             assertThat(
-                shuffle(10, listOf(ShuffleInstruction(CUT, -4))),
-                equalTo(listOf(6, 7, 8, 9, 0, 1, 2, 3, 4, 5))
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, -4))),
+                equalTo(listOf(6L, 7, 8, 9, 0, 1, 2, 3, 4, 5))
             )
             assertThat(
-                shuffle(10, listOf(ShuffleInstruction(CUT, -5))),
-                equalTo(shuffle(10, listOf(ShuffleInstruction(CUT, 5))))
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, -5))),
+                equalTo(shuffleToList(10, listOf(ShuffleInstruction(CUT, 5))))
+            )
+            assertThat(
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, -9))),
+                equalTo(shuffleToList(10, listOf(ShuffleInstruction(CUT, 1))))
             )
         }
 
         @Test
         internal fun `deal with increment`() {
             assertThat(
-                shuffle(10, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 3))),
-                equalTo(listOf(0, 7, 4, 1, 8, 5, 2, 9, 6, 3))
+                shuffleToList(10L, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 3))),
+                equalTo(listOf(0L, 7, 4, 1, 8, 5, 2, 9, 6, 3))
             )
             assertThat(
-                shuffle(10, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 7))),
-                equalTo(listOf(0, 3, 6, 9, 2, 5, 8, 1, 4, 7))
+                shuffleToList(10L, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 7))),
+                equalTo(listOf(0L, 3, 6, 9, 2, 5, 8, 1, 4, 7))
             )
         }
 
@@ -88,10 +103,19 @@ class Day22Test {
         internal fun `part 1`() {
             val shuffledDeck = shuffle(10007, parseInstructions(input))
             assertThat(
-                findPositionOfCard(2019, shuffledDeck),
-                equalTo(7395)
+                findPositionOfCard(2019L, shuffledDeck),
+                equalTo(7395L)
             )
         }
+    }
+
+    @Test
+    internal fun `part 2`() {
+//        val shuffledDeck = shuffle(119315717514047, parseInstructions(input))
+//        assertThat(
+//            findPositionOfCard(2020L, shuffledDeck),
+//            equalTo(7395L)
+//        )
     }
 
     private val input = """deal with increment 18

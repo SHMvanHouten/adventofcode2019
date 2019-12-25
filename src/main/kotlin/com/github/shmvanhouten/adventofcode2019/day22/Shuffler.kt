@@ -1,37 +1,55 @@
 package com.github.shmvanhouten.adventofcode2019.day22
 
-import com.github.shmvanhouten.adventofcode2017.util.splitIntoTwo
-
-fun shuffle(deckSize: Int, instructions: List<ShuffleInstruction>): List<Int> {
-    return instructions.fold(0.until(deckSize).toList()) { deck, instruction -> performInstruction(deck, instruction) }
+fun shuffleToList(deckSize: Long, instructions: List<ShuffleInstruction>): List<Long> {
+    return shuffle(deckSize, instructions).toSortedMap().values.toList()
 }
 
-fun findPositionOfCard(cardNumber: Int, deck: List<Int>): Int {
-    return deck.mapIndexed { i, n -> i to n }.find { it.second == cardNumber }?.first ?: throw IllegalStateException("Card $cardNumber not found")
+fun shuffle(deckSize: Long, instructions: List<ShuffleInstruction>): Map<Long, Long> {
+    return instructions.fold(0L.until(deckSize).map { it to it }.toMap()) { deck, instruction -> performInstruction(deck, instruction, deckSize) }
 }
 
-fun performInstruction(deck: List<Int>, instruction: ShuffleInstruction): List<Int> {
+fun findPositionOfCard(cardNumber: Long, deck: Map<Long, Long>): Long {
+    return deck.entries.find { it.value == cardNumber }?.key ?: throw IllegalStateException("Card $cardNumber not found")
+}
+
+fun performInstruction(
+    deck: Map<Long, Long>,
+    instruction: ShuffleInstruction,
+    deckSize: Long
+): Map<Long, Long> {
     return when(instruction.type) {
-        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrement(deck, instruction.number)
-        Instructiontype.CUT -> cut(deck, instruction.number)
-        Instructiontype.DEAL_INTO_NEW_STACK -> deck.reversed()
+        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrement(deck, instruction.number, deckSize)
+        Instructiontype.CUT -> cut(deck, instruction.number, deckSize)
+        Instructiontype.DEAL_INTO_NEW_STACK -> reverse(deck)
     }
 }
 
-fun dealWithIncrement(deck: List<Int>, amount: Int): List<Int> {
-    val newDeck = IntArray(deck.size)
-    deck.forEachIndexed{ i, n ->
-        newDeck[(i * amount) % deck.size] = n
-    }
-    return newDeck.toList()
+fun reverse(deck: Map<Long, Long>): Map<Long, Long> {
+    val sortedDeck = deck.toSortedMap()
+    return sortedDeck.keys.zip(sortedDeck.values.reversed()).toMap()
 }
 
-fun cut(deck: List<Int>, amount: Int): List<Int> {
+fun dealWithIncrement(
+    deck: Map<Long, Long>,
+    amount: Long,
+    deckSize: Long
+): Map<Long, Long> {
+    val newDeck = mutableMapOf<Long, Long>()
+    0L.until(deckSize).map { i ->
+        newDeck[(i * amount) % deckSize] = deck[i]!!
+    }
+    return newDeck
+}
+
+fun cut(deck: Map<Long, Long>, amount: Long, deckSize: Long): Map<Long, Long> {
     val index = if(amount < 0) {
-        deck.size + amount
+        deckSize + amount
     } else {
         amount
     }
-    val (first, second) = deck.splitIntoTwo(index)
-    return second + first
+    return deck.moveDeckFromIndexToStart(index, deckSize)
+}
+
+private fun Map<Long, Long>.moveDeckFromIndexToStart(index: Long, deckSize: Long): Map<Long, Long> {
+    return 0L.until(deckSize).map { it to this[(index + it) % deckSize]!! }.toMap()
 }
