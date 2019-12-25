@@ -22,6 +22,7 @@ interface IComputer {
     val output: Queue<Long>
 
     fun input(input: Long = 0): ExecutionType
+    fun run(): ExecutionType
     fun copy(): IComputer
 }
 
@@ -57,7 +58,7 @@ class Computer(
         return execution
     }
 
-    fun run(): ExecutionType {
+    override fun run(): ExecutionType {
         execution = RUN
         while (execution == RUN) {
             pointer = execute(pointer)

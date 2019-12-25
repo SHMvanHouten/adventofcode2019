@@ -20,7 +20,7 @@ class Day17Test {
         @Test
         internal fun `our printer prints the ascii string it receives`() {
             val computer = FakeComputer()
-            val printer = Printer(computer)
+            val printer = AsciiComputer(computer)
 
             computer.output.offer('H'.toLong())
             computer.output.offer('e'.toLong())
@@ -52,7 +52,7 @@ class Day17Test {
         @Test
         internal fun part1() {
             val computer = Computer(IntCode(input))
-            val printer = Printer(computer)
+            val printer = AsciiComputer(computer)
             val map = printer.print()
             println(map)
             val intersections = findIntersections(map)

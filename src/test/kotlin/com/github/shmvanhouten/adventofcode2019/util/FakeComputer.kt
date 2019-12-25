@@ -5,6 +5,10 @@ import com.github.shmvanhouten.adventofcode2019.day02.IComputer
 import java.util.*
 
 class FakeComputer : IComputer {
+    override fun run(): ExecutionType {
+        return input(0)
+    }
+
     override val output: Queue<Long> = LinkedList<Long>()
 
     val inputs = LinkedList<Long>()
