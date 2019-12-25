@@ -137,12 +137,12 @@ class Day20Test {
                         |  #############.#.#.###.###################  
                         |               A O F   N                     
                         |               A A D   M                     """.trimMargin()
-//            assertThat(findQuickestPath2(parsePortalDonut(input)), equalTo(396))
+            assertThat(findQuickestPath2(parsePortalDonut(input)), equalTo(396))
         }
 
         @Test
         internal fun part2() {
-
+//            assertThat(findQuickestPath2(parsePortalDonut(input)), equalTo(7166))
         }
     }
 
