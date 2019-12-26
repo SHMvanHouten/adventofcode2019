@@ -109,13 +109,115 @@ class Day22Test {
         }
     }
 
-    @Test
-    internal fun `part 2`() {
-//        val shuffledDeck = shuffle(119315717514047, parseInstructions(input))
-//        assertThat(
-//            findPositionOfCard(2020L, shuffledDeck),
-//            equalTo(7395L)
-//        )
+    @Nested
+    inner class Part2 {
+
+        @Test
+        internal fun `a deal with increment on card 2019 on a deck with 10007 cards`() {
+            // card 2019 becomes 2019 * 18 % 10007
+            assertThat(
+                dealWithIncrement(2019, 18, 10007),
+                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 18)))))
+            )
+        }
+
+        @Test
+        internal fun `a cut by 200 moves card on index 2019 to index 1819 on a deck with 10007 cards`() {
+            assertThat(
+                cut(2019, 200, 10007),
+                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(CUT, 200)))))
+            )
+        }
+
+        @Test
+        internal fun `a cut by -200 moves card on index 2019 to index 9807 on a deck with 10007 cards`() {
+            assertThat(
+                cut(2019, -200, 10007),
+                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(CUT, -200)))))
+            )
+        }
+
+        @Test
+        internal fun `a cut by -3893 moves card on index 6321 to index 207 on a deck with 10007 cards`() {
+            assertThat(
+                cut(6321, -3893, 10007),
+                equalTo(findPositionOfCard(6321, shuffle(10007, listOf(ShuffleInstruction(CUT, -3893)))))
+            )
+        }
+
+        @Test
+        internal fun `a cut by 200 moves card on index 100 to index 9907 on a deck with 10007 cards`() {
+            assertThat(
+                cut(100, 200, 10007),
+                equalTo(findPositionOfCard(100, shuffle(10007, listOf(ShuffleInstruction(CUT, 200)))))
+            )
+        }
+
+        @Test
+        internal fun `a deal into new stack is deck length - index`() {
+            assertThat(
+                reverse(2019, 10007),
+                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(DEAL_INTO_NEW_STACK)))))
+            )
+        }
+
+        @Test
+        internal fun `do part 1 but faster`() {
+            assertThat(
+                shuffleJustOneCard(2019, 10007, parseInstructions(input)),
+                equalTo(7395L)
+            )
+        }
+
+        @Test
+        internal fun `the inverse of reverse is reverse`() {
+            assertThat(reverse(8772, 10007), equalTo(reverse(reverse(1234, 10007), 10007)))
+        }
+
+        @Test
+        internal fun `the inverse of cut is`() {
+            println(cut(1234, 555, 10007))
+            assertThat(cutInverse(679, 555, 10007), equalTo(1234L))
+
+            println(cut(123, 555, 10007))
+            assertThat(cutInverse(9575, 555, 10007), equalTo(123L))
+
+            println(cut(1234, -555, 10007))
+            assertThat(cutInverse(1789, -555, 10007), equalTo(1234L))
+
+            println(cut(123, -555, 10007))
+            assertThat(cutInverse(678, -555, 10007), equalTo(123L))
+
+            println(cut(9998, -555, 10007))
+            assertThat(cutInverse(546, -555, 10007), equalTo(9998L))
+        }
+
+        @Test
+        internal fun `the inverse of deal with increment is`() {
+            println(dealWithIncrement(9, 3, 10))
+            assertThat(dealWithIncrementInverse(7, 3, 10), equalTo(9L))
+
+            println(dealWithIncrement(1234, 18, 10007))
+            assertThat(dealWithIncrementInverse(2198, 18, 10007), equalTo(1234L))
+        }
+
+        @Test
+        internal fun `reverse part 1`() {
+            assertThat(inverseShuffleOneCard(7395, 10007, parseInstructions(input)), equalTo(2019L))
+        }
+
+        @Test
+        internal fun `do it 10006 times`() {
+            assertThat(inverseShuffleJustOneCardXTimes(2019, 10007, 10006, parseInstructions(input)), equalTo(2019L))
+        }
+
+        @Test
+        internal fun `part 2`() {
+//            println(inverseShuffleJustOneCardXTimes(2020, 119315717514047, 119315717514047 - 101741582076661 - 1, parseInstructions(input)))
+
+            // 119315717514047 - 101741582076661 = 17574135437386
+        }
+
     }
 
     private val input = """deal with increment 18
