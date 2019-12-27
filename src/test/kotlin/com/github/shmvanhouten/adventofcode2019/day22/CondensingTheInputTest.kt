@@ -3,10 +3,9 @@ package com.github.shmvanhouten.adventofcode2019.day22
 import com.github.shmvanhouten.adventofcode2019.day22.Instructiontype.*
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.math.BigInteger
 
-@Nested
 class CondensingTheInputTest {
 
     @Test
@@ -16,14 +15,14 @@ class CondensingTheInputTest {
                 10007,
                 listOf(
                     ShuffleInstruction(DEAL_INTO_NEW_STACK),
-                    ShuffleInstruction(CUT, 3)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(3))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, -3),
+                        ShuffleInstruction(CUT, BigInteger.valueOf(-3)),
                         ShuffleInstruction(DEAL_INTO_NEW_STACK)
                     )
                 )
@@ -34,14 +33,14 @@ class CondensingTheInputTest {
                 10007,
                 listOf(
                     ShuffleInstruction(DEAL_INTO_NEW_STACK),
-                    ShuffleInstruction(CUT, -3)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-3))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, 3),
+                        ShuffleInstruction(CUT, BigInteger.valueOf(3)),
                         ShuffleInstruction(DEAL_INTO_NEW_STACK)
                     )
                 )
@@ -56,15 +55,15 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, 4),
-                    ShuffleInstruction(CUT, 3)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(4)),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(3))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, 7)
+                        ShuffleInstruction(CUT, BigInteger.valueOf(7))
                     )
                 )
             )
@@ -73,15 +72,15 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, 10000),
-                    ShuffleInstruction(CUT, 10)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(10000)),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(10))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, 3)
+                        ShuffleInstruction(CUT, BigInteger.valueOf(3))
                     )
                 )
             )
@@ -90,15 +89,15 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, 4),
-                    ShuffleInstruction(CUT, -3)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(4)),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-3))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, 1)
+                        ShuffleInstruction(CUT, BigInteger.valueOf(1))
                     )
                 )
             )
@@ -107,15 +106,15 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, -4),
-                    ShuffleInstruction(CUT, -3)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-4)),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-3))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, -7)
+                        ShuffleInstruction(CUT, BigInteger.valueOf(-7))
                     )
                 )
             )
@@ -124,15 +123,15 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, -10000),
-                    ShuffleInstruction(CUT, -10)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-10000)),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-10))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, -3)
+                        ShuffleInstruction(CUT, BigInteger.valueOf(-3))
                     )
                 )
             )
@@ -148,15 +147,15 @@ class CondensingTheInputTest {
         assertThat(
             shuffleToList(10007,
                 listOf(
-                    ShuffleInstruction(CUT, 4),
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 3)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(4)),
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(3))
                 )
             ),
             equalTo(
                 shuffleToList(10007,
                     listOf(
-                        ShuffleInstruction(DEAL_WITH_INCREMENT, 3),
-                        ShuffleInstruction(CUT, (3 * 4))
+                        ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(3)),
+                        ShuffleInstruction(CUT, BigInteger.valueOf((3 * 4)))
                     )
                 )
             )
@@ -164,15 +163,15 @@ class CondensingTheInputTest {
         assertThat(
             shuffleToList(10007,
                 listOf(
-                    ShuffleInstruction(CUT, -4),
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 3)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-4)),
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(3))
                 )
             ),
             equalTo(
                 shuffleToList(10007,
                     listOf(
-                        ShuffleInstruction(DEAL_WITH_INCREMENT, 3),
-                        ShuffleInstruction(CUT, (3 * -4))
+                        ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(3)),
+                        ShuffleInstruction(CUT, BigInteger.valueOf((3 * -4)))
                     )
                 )
             )
@@ -180,15 +179,15 @@ class CondensingTheInputTest {
         assertThat(
             shuffleToList(10007,
                 listOf(
-                    ShuffleInstruction(CUT, 10000),
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 18)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(10000)),
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(18))
                 )
             ),
             equalTo(
                 shuffleToList(10007,
                     listOf(
-                        ShuffleInstruction(DEAL_WITH_INCREMENT, 18),
-                        ShuffleInstruction(CUT, (10000 * 18 % 10007))
+                        ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(18)),
+                        ShuffleInstruction(CUT, BigInteger.valueOf((10000 * 18 % 10007)))
                     )
                 )
             )
@@ -201,15 +200,15 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 4),
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 3)
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(4)),
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(3))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(DEAL_WITH_INCREMENT, 3 * 4)
+                        ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(3 * 4))
                     )
                 )
             )
@@ -218,15 +217,15 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 18),
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 20)
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(18)),
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(20))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(DEAL_WITH_INCREMENT, 18 * 20)
+                        ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(18 * 20))
                     )
                 )
             )
@@ -236,16 +235,16 @@ class CondensingTheInputTest {
     @Test
     internal fun `deal with increment (stackSize - 1) is reverse and cut -1`() {
         assertThat(
-            shuffleToList(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 10006))),
+            shuffleToList(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(10006)))),
             equalTo(
-                shuffleToList(10007,listOf(ShuffleInstruction(DEAL_INTO_NEW_STACK), ShuffleInstruction(CUT, -1))
+                shuffleToList(10007,listOf(ShuffleInstruction(DEAL_INTO_NEW_STACK), ShuffleInstruction(CUT, BigInteger.valueOf(-1)))
                 )
             )
         )
         assertThat(
-            shuffleToList(10007,listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 10006))),
+            shuffleToList(10007,listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(10006)))),
             equalTo(
-                shuffleToList(10007, listOf(ShuffleInstruction(CUT, 1), ShuffleInstruction(DEAL_INTO_NEW_STACK))
+                shuffleToList(10007, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(1)), ShuffleInstruction(DEAL_INTO_NEW_STACK))
                 )
             )
         )
@@ -257,12 +256,12 @@ class CondensingTheInputTest {
         //deal with increment x <==>     cut x - 1
         //                               deal into stack
         assertThat(
-            shuffleToList(10007, listOf(ShuffleInstruction(DEAL_INTO_NEW_STACK), ShuffleInstruction(DEAL_WITH_INCREMENT, 5209))),
+            shuffleToList(10007, listOf(ShuffleInstruction(DEAL_INTO_NEW_STACK), ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(5209)))),
             equalTo(
-                shuffleToList(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, -5209), ShuffleInstruction(CUT, -5208), ShuffleInstruction(DEAL_INTO_NEW_STACK))
+                shuffleToList(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(-5209)), ShuffleInstruction(CUT, BigInteger.valueOf(-5208)), ShuffleInstruction(DEAL_INTO_NEW_STACK)))
                 )
             )
-        )
+
     }
 
     @Test
@@ -274,12 +273,12 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007, listOf(
                     ShuffleInstruction(DEAL_INTO_NEW_STACK),
-                    ShuffleInstruction(CUT, 5),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(5)),
                     ShuffleInstruction(DEAL_INTO_NEW_STACK)
                 )
             ),
             equalTo(
-                shuffleToList(10007, listOf(ShuffleInstruction(CUT, -5)))
+                shuffleToList(10007, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(-5))))
             )
         )
     }
@@ -293,16 +292,16 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, 18),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(18)),
                     ShuffleInstruction(DEAL_INTO_NEW_STACK),
-                    ShuffleInstruction(CUT, 5)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(5))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(CUT, 18 - 5),
+                        ShuffleInstruction(CUT, BigInteger.valueOf(18 - 5)),
                         ShuffleInstruction(DEAL_INTO_NEW_STACK)
                     )
                 )
@@ -316,9 +315,9 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, 18),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(18)),
                     ShuffleInstruction(DEAL_INTO_NEW_STACK),
-                    ShuffleInstruction(CUT, 5)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(5))
                 )
             ),
             equalTo(
@@ -326,7 +325,7 @@ class CondensingTheInputTest {
                     10007,
                     listOf(
                         ShuffleInstruction(DEAL_INTO_NEW_STACK),
-                        ShuffleInstruction(CUT, 5 - 18)
+                        ShuffleInstruction(CUT, BigInteger.valueOf(5 - 18))
                     )
                 )
             )
@@ -342,20 +341,61 @@ class CondensingTheInputTest {
             shuffleToList(
                 10007,
                 listOf(
-                    ShuffleInstruction(CUT, 94),
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 18),
-                    ShuffleInstruction(CUT, 5)
+                    ShuffleInstruction(CUT, BigInteger.valueOf(94)),
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(18)),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(5))
                 )
             ),
             equalTo(
                 shuffleToList(
                     10007,
                     listOf(
-                        ShuffleInstruction(DEAL_WITH_INCREMENT, 18),
-                        ShuffleInstruction(CUT, 94 * 18 + 5 % 10007)
+                        ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(18)),
+                        ShuffleInstruction(CUT, BigInteger.valueOf(94 * 18 + 5 % 10007))
                     )
                 )
             )
+        )
+    }
+
+    @Test
+    internal fun `so this should also condense`() {
+        val instructions = listOf(
+            ShuffleInstruction(type = CUT, number = BigInteger.valueOf(-1549130178654)),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = BigInteger.valueOf(-7446)),
+            ShuffleInstruction(type = CUT, number = BigInteger.valueOf(55352327)),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = BigInteger.valueOf(75))
+        )
+        val condensed = listOf(
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = BigInteger.valueOf(-7446)),
+            ShuffleInstruction(type = CUT, number = BigInteger.valueOf((-1549130178654 * 7446))),
+            ShuffleInstruction(type = CUT, number = BigInteger.valueOf(55352327)),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = BigInteger.valueOf(75))
+        )
+        assertThat(
+            shuffleToList(10007, condensed),
+            equalTo(shuffleToList(10007, instructions))
+            )
+    }
+
+    @Test
+    internal fun `and this`() {
+        val instructions = listOf(
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = BigInteger.valueOf(11610)),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = BigInteger.valueOf(-7328813184000)),
+            ShuffleInstruction(type = CUT, number = BigInteger("19444103462680512001"))
+        )
+        val condensed = listOf(
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = BigInteger("85087521066240000")),
+            ShuffleInstruction(type = CUT, number = BigInteger("-7328813183999")),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = CUT, number = BigInteger("19444103462680512001"))
+        )
+
+        assertThat(
+            shuffleToList(23, condensed),
+            equalTo(shuffleToList(23, instructions))
         )
     }
 
@@ -382,7 +422,7 @@ cut -3085"""
         val instructions = parseInstructions(input)
         assertThat(
             condenseInstructions(instructions),
-            equalTo(listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 270), ShuffleInstruction(CUT, -61480)))
+            equalTo(listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(270)), ShuffleInstruction(CUT, BigInteger.valueOf(-61480))))
         )
     }
 
@@ -399,10 +439,8 @@ cut -2092"""
             condenseInstructions(instructions),
             equalTo(
                 listOf(
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 270),
-                    ShuffleInstruction(CUT, -61480),
-                    ShuffleInstruction(DEAL_WITH_INCREMENT, 43),
-                    ShuffleInstruction(CUT, -2092)
+                    ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(11610)),
+                    ShuffleInstruction(CUT, BigInteger.valueOf(-2645732))
                 )
             )
         )
@@ -414,52 +452,58 @@ cut -2092"""
         val condensedInstructions = condenseInstructions(instructions)
         println(condensedInstructions)
         println("condensed from ${instructions.size} to ${condensedInstructions.size}")
-
         assertThat(
             shuffleToList(10007, condensedInstructions),
             equalTo(shuffleToList(10007, instructions))
+        )
+
+    }
+
+    @Test
+    internal fun `condensed instructions`() {
+        val condensedInstructions = listOf(
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type=CUT, number= BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428"))
+        )
+        assertThat(
+            shuffleToList(10007, condensedInstructions),
+            equalTo(shuffleToList(10007, parseInstructions(input)))
         )
     }
 
     @Test
-    internal fun `condensedInstructions temp`() {
+    internal fun `condensed instructions x times`() {
+//        val condensedInstructions = listOf(
+//            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
+//            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
+//            ShuffleInstruction(type=CUT, number=BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428"))
+//        ).map { performModulusOnSize(it, 10007) }
+//        val repeatedInstructions = generateSequence(condensedInstructions){list -> list + condensedInstructions }.flatten().take(1234 * 3).toList()
+//        assertThat(repeatedInstructions.size, equalTo(1234 * 3))
+//        val condensedRepeated = condenseInstructions(repeatedInstructions)
+//        println(condensedRepeated.size)
+//        assertThat(
+//            findPositionOfCard(2019, shuffle(10007, condensedRepeated)),
+//            equalTo(shuffleJustOneCardXTimes(2019, 10007, 1234, parseInstructions(input)))
+//        )
+    }
+
+    @Test
+    internal fun `condensed instructions x times extra condensed`() {
         val condensedInstructions = listOf(
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 11610),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = CUT, number = 2653104),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 66),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 111042624000),
-            ShuffleInstruction(type = CUT, number = -564592856500475),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 174578040000),
-            ShuffleInstruction(type = CUT, number = 528341139860631),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 16200),
-            ShuffleInstruction(type = CUT, number = 24596406),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 1145760),
-            ShuffleInstruction(type = CUT, number = -121726336),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 7756961280),
-            ShuffleInstruction(type = CUT, number = -1549130178654),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = -7446),
-            ShuffleInstruction(type = CUT, number = 55352327),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 75),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 2394),
-            ShuffleInstruction(type = CUT, number = 266247),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 1556279200),
-            ShuffleInstruction(type = CUT, number = 628192128984),
-            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 150),
-            ShuffleInstruction(type = CUT, number = -5121)
-        )
-        val instructions = parseInstructions(input)
+            ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(6015 * 6015)),
+            ShuffleInstruction(CUT, BigInteger.valueOf(-6015 * 6824 + 6824 - 6014))
+        ).map { performModulusOnSize(it, 10007) }
+        val condensedTimes4 = condenseInstructions(condensedInstructions + condensedInstructions).map { performModulusOnSize(it, 10007) }
+        val condensedTimes8 = condenseInstructions(condensedTimes4 + condensedTimes4).map { performModulusOnSize(it, 10007) }
+        val condensedTimes16 = condenseInstructions(condensedTimes8 + condensedTimes8).map { performModulusOnSize(it, 10007) }
+        val condensedTimes32 = condenseInstructions(condensedTimes16 + condensedTimes16).map { performModulusOnSize(it, 10007) }
+        val condensedTimes64 = condenseInstructions(condensedTimes32 + condensedTimes32).map { performModulusOnSize(it, 10007) }
+        println(condensedTimes64.size)
         assertThat(
-            shuffleToList(10007, condensedInstructions),
-            equalTo(shuffleToList(10007, instructions))
+            findPositionOfCard(2019, shuffle(10007, condensedTimes64)),
+            equalTo(shuffleJustOneCardXTimes(2019, 10007, 64, parseInstructions(input)))
         )
     }
 

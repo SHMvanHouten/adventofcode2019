@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.math.BigInteger
 
 class Day22Test {
 
@@ -22,9 +23,9 @@ class Day22Test {
             assertThat(
                 parseInstructions(input), equalTo(
                     listOf(
-                        ShuffleInstruction(DEAL_WITH_INCREMENT, 12),
-                        ShuffleInstruction(CUT, 123),
-                        ShuffleInstruction(CUT, -456),
+                        ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(12)),
+                        ShuffleInstruction(CUT, BigInteger.valueOf(123)),
+                        ShuffleInstruction(CUT, BigInteger.valueOf(-456)),
                         ShuffleInstruction(DEAL_INTO_NEW_STACK)
                     )
                 )
@@ -58,15 +59,15 @@ class Day22Test {
         @Test
         internal fun `cut n cards positive input`() {
             assertThat(
-                shuffleToList(10, listOf(ShuffleInstruction(CUT, 3))),
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(3)))),
                 equalTo(listOf(3L, 4, 5, 6, 7, 8, 9, 0, 1, 2))
             )
             assertThat(
-                shuffleToList(10, listOf(ShuffleInstruction(CUT, 4))),
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(4)))),
                 equalTo(listOf(4L, 5, 6, 7, 8, 9, 0, 1, 2, 3))
             )
             assertThat(
-                shuffleToList(10, listOf(ShuffleInstruction(CUT, 8))),
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(8)))),
                 equalTo(listOf(8L, 9, 0, 1, 2, 3, 4, 5, 6, 7))
             )
         }
@@ -74,27 +75,27 @@ class Day22Test {
         @Test
         internal fun `cut n cards negative input`() {
             assertThat(
-                shuffleToList(10, listOf(ShuffleInstruction(CUT, -4))),
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(-4)))),
                 equalTo(listOf(6L, 7, 8, 9, 0, 1, 2, 3, 4, 5))
             )
             assertThat(
-                shuffleToList(10, listOf(ShuffleInstruction(CUT, -5))),
-                equalTo(shuffleToList(10, listOf(ShuffleInstruction(CUT, 5))))
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(-5)))),
+                equalTo(shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(5)))))
             )
             assertThat(
-                shuffleToList(10, listOf(ShuffleInstruction(CUT, -9))),
-                equalTo(shuffleToList(10, listOf(ShuffleInstruction(CUT, 1))))
+                shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(-9)))),
+                equalTo(shuffleToList(10, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(1)))))
             )
         }
 
         @Test
         internal fun `deal with increment`() {
             assertThat(
-                shuffleToList(10L, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 3))),
+                shuffleToList(10L, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(3)))),
                 equalTo(listOf(0L, 7, 4, 1, 8, 5, 2, 9, 6, 3))
             )
             assertThat(
-                shuffleToList(10L, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 7))),
+                shuffleToList(10L, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(7)))),
                 equalTo(listOf(0L, 3, 6, 9, 2, 5, 8, 1, 4, 7))
             )
         }
@@ -117,7 +118,7 @@ class Day22Test {
             // card 2019 becomes 2019 * 18 % 10007
             assertThat(
                 dealWithIncrement(2019, 18, 10007),
-                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 18)))))
+                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(18))))))
             )
         }
 
@@ -125,7 +126,7 @@ class Day22Test {
         internal fun `a cut by 200 moves card on index 2019 to index 1819 on a deck with 10007 cards`() {
             assertThat(
                 cut(2019, 200, 10007),
-                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(CUT, 200)))))
+                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(200))))))
             )
         }
 
@@ -133,7 +134,7 @@ class Day22Test {
         internal fun `a cut by -200 moves card on index 2019 to index 9807 on a deck with 10007 cards`() {
             assertThat(
                 cut(2019, -200, 10007),
-                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(CUT, -200)))))
+                equalTo(findPositionOfCard(2019, shuffle(10007, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(-200))))))
             )
         }
 
@@ -141,7 +142,7 @@ class Day22Test {
         internal fun `a cut by -3893 moves card on index 6321 to index 207 on a deck with 10007 cards`() {
             assertThat(
                 cut(6321, -3893, 10007),
-                equalTo(findPositionOfCard(6321, shuffle(10007, listOf(ShuffleInstruction(CUT, -3893)))))
+                equalTo(findPositionOfCard(6321, shuffle(10007, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(-3893))))))
             )
         }
 
@@ -149,7 +150,7 @@ class Day22Test {
         internal fun `a cut by 200 moves card on index 100 to index 9907 on a deck with 10007 cards`() {
             assertThat(
                 cut(100, 200, 10007),
-                equalTo(findPositionOfCard(100, shuffle(10007, listOf(ShuffleInstruction(CUT, 200)))))
+                equalTo(findPositionOfCard(100, shuffle(10007, listOf(ShuffleInstruction(CUT, BigInteger.valueOf(200))))))
             )
         }
 

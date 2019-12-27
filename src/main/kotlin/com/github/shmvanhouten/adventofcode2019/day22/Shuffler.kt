@@ -1,15 +1,23 @@
 package com.github.shmvanhouten.adventofcode2019.day22
 
+import java.math.BigInteger
+
 fun shuffleToList(deckSize: Long, instructions: List<ShuffleInstruction>): List<Long> {
     return shuffle(deckSize, instructions).toSortedMap().values.toList()
 }
 
 fun shuffle(deckSize: Long, instructions: List<ShuffleInstruction>): Map<Long, Long> {
-    return instructions.fold(
+    return instructions
+        .map { performModulusOnSize(it, deckSize) }
+        .fold(
         0L.until(deckSize).map { it to it }.toMap()
     ) { deck, instruction ->
         performInstruction(deck, instruction, deckSize)
     }
+}
+
+fun performModulusOnSize(instruction: ShuffleInstruction, deckSize: Long): ShuffleInstruction {
+    return ShuffleInstruction(instruction.type, instruction.number % BigInteger.valueOf(deckSize))
 }
 
 fun findPositionOfCard(cardNumber: Long, deck: Map<Long, Long>): Long {
@@ -23,8 +31,8 @@ fun performInstruction(
     deckSize: Long
 ): Map<Long, Long> {
     return when (instruction.type) {
-        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrement(deck, instruction.number % deckSize, deckSize)
-        Instructiontype.CUT -> cut(deck, instruction.number % deckSize, deckSize)
+        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrement(deck, instruction.number.toLong(), deckSize)
+        Instructiontype.CUT -> cut(deck, instruction.number.toLong(), deckSize)
         Instructiontype.DEAL_INTO_NEW_STACK -> reverse(deck)
     }
 }
@@ -39,17 +47,20 @@ fun dealWithIncrement(
     amount: Long,
     deckSize: Long
 ): Map<Long, Long> {
-    // todo: also change this for the "only one card" ways
-    val newAmount = if(amount < 0) {
-        deckSize - amount
-    } else {
-        amount
-    }
+    val newAmount = handleNegativeAmount(amount, deckSize)
     val newDeck = mutableMapOf<Long, Long>()
     0L.until(deckSize).map { i ->
         newDeck[(i * newAmount) % deckSize] = deck[i]!!
     }
     return newDeck
+}
+
+private fun handleNegativeAmount(amount: Long, deckSize: Long): Long {
+    return if (amount < 0) {
+        deckSize - amount
+    } else {
+        amount
+    }
 }
 
 fun cut(deck: Map<Long, Long>, amount: Long, deckSize: Long): Map<Long, Long> {
@@ -69,13 +80,24 @@ private fun Map<Long, Long>.moveDeckFromIndexToStart(index: Long, deckSize: Long
 fun shuffleJustOneCardXTimes(originalIndex: Long, deckSize: Long, repeats: Long, instructions: List<ShuffleInstruction>): Long {
     var index = originalIndex
     0L.until(repeats).forEach { _ ->
-        index = shuffleJustOneCard(index, deckSize, instructions)
+        index = shuffleJustOneCard1(index, deckSize, instructions.map { performModulusOnSize(it, deckSize) })
     }
     return index
 }
 
+private fun shuffleJustOneCard1(originalIndex: Long, deckSize: Long, instructions: List<ShuffleInstruction>): Long {
+    return instructions
+        .fold(
+        originalIndex
+    ) { index, instruction ->
+        performInstruction(index, instruction, deckSize)
+    }
+}
+
 fun shuffleJustOneCard(originalIndex: Long, deckSize: Long, instructions: List<ShuffleInstruction>): Long {
-    return instructions.fold(
+    return instructions
+        .map { performModulusOnSize(it, deckSize) }
+        .fold(
         originalIndex
     ) { index, instruction ->
         performInstruction(index, instruction, deckSize)
@@ -88,8 +110,8 @@ fun performInstruction(
     deckSize: Long
 ): Long {
     return when (instruction.type) {
-        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrement(index, instruction.number % deckSize, deckSize)
-        Instructiontype.CUT -> cut(index, instruction.number % deckSize, deckSize)
+        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrement(index, instruction.number.toLong(), deckSize)
+        Instructiontype.CUT -> cut(index, instruction.number.toLong(), deckSize)
         Instructiontype.DEAL_INTO_NEW_STACK -> reverse(index, deckSize)
     }
 }
@@ -99,7 +121,8 @@ fun dealWithIncrement(
     amount: Long,
     deckSize: Long
 ): Long {
-    return oldIndex * amount % deckSize
+    val newAmount = handleNegativeAmount(amount, deckSize)
+    return oldIndex * newAmount % deckSize
 }
 
 fun cut(oldIndex: Long, amount: Long, deckSize: Long): Long {
@@ -119,8 +142,9 @@ fun dealWithIncrementInverse(
     amount: Long,
     deckSize: Long
 ): Long {
+    val newAmount = handleNegativeAmount(amount, deckSize)
     var r = newIndex
-    while (r % amount != 0L) {
+    while (r % newAmount != 0L) {
         r += deckSize
     }
     return r/amount
@@ -141,8 +165,8 @@ fun performInverseInstruction(
     deckSize: Long
 ): Long {
     return when (instruction.type) {
-        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrementInverse(index, instruction.number % deckSize, deckSize)
-        Instructiontype.CUT -> cutInverse(index, instruction.number % deckSize, deckSize)
+        Instructiontype.DEAL_WITH_INCREMENT -> dealWithIncrementInverse(index, (instruction.number % BigInteger.valueOf(deckSize)).toLong(), deckSize)
+        Instructiontype.CUT -> cutInverse(index, (instruction.number % BigInteger.valueOf(deckSize)).toLong(), deckSize)
         Instructiontype.DEAL_INTO_NEW_STACK -> reverse(index, deckSize)
     }
 }
