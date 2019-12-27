@@ -430,6 +430,49 @@ cut -2092"""
         )
     }
 
+    @Test
+    internal fun `condensedInstructions temp`() {
+        val condensedInstructions = listOf(
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=11610),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=CUT,number=2653104),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=66),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=111042624000),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=174578040000),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=16200),
+            ShuffleInstruction(type=CUT,number=-6862861812890383810),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=1145760),
+            ShuffleInstruction(type=CUT,number=-121726336),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=7756961280),
+            ShuffleInstruction(type=CUT,number=-1549130178654),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=7446),
+            ShuffleInstruction(type=CUT,number=-55364818),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=CUT,number=-5046),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=75),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=2394),
+            ShuffleInstruction(type=CUT,number=266247),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=1556279200),
+            ShuffleInstruction(type=CUT,number=628192128984),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=150),
+            ShuffleInstruction(type=CUT,number=-5121)
+        )
+        val instructions = parseInstructions(input)
+        assertThat(
+            shuffleToList(10007, condensedInstructions),
+            equalTo(shuffleToList(10007, instructions))
+        )
+    }
+
     private val input = """deal with increment 18
 cut -3893
 deal with increment 15

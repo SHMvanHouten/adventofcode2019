@@ -84,10 +84,16 @@ private fun switchCutAndReverseAtIndex(
 ): MutableList<ShuffleInstruction> {
     val instructions = shuffleInstructions.toMutableList()
 
-    val cutInstruction = shuffleInstructions[i]
-    val reverse = shuffleInstructions[i + 1]
-    instructions[i] = reverse
-    instructions[i + 1] = ShuffleInstruction(CUT, -1 * cutInstruction.number)
+    val first = shuffleInstructions[i]
+    val second = shuffleInstructions[i + 1]
+
+    if (first.type == CUT) {
+        instructions[i] = second
+        instructions[i + 1] = ShuffleInstruction(CUT, -1 * first.number)
+    } else {
+        instructions[i] = ShuffleInstruction(CUT, -1 * second.number)
+        instructions[i + 1] = first
+    }
     return instructions
 }
 
@@ -99,7 +105,8 @@ fun findIndexWhereCutAndDWICanBeSwitched(shuffleInstructions: List<ShuffleInstru
 
 fun findIndexWhereCutAndReverseCanBeSwitched(shuffleInstructions: List<ShuffleInstruction>, index: Int): Int {
     return index.until(shuffleInstructions.size - 1).find { i ->
-        shuffleInstructions[i].type == CUT && shuffleInstructions[i + 1].type == DEAL_INTO_NEW_STACK
+        (shuffleInstructions[i].type == CUT && shuffleInstructions[i + 1].type == DEAL_INTO_NEW_STACK) ||
+                (shuffleInstructions[i].type == DEAL_INTO_NEW_STACK && shuffleInstructions[i + 1].type == CUT)
     } ?: shuffleInstructions.size
 }
 
