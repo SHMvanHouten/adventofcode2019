@@ -10,6 +10,7 @@ fun condenseInstructions(instructions: List<ShuffleInstruction>): List<ShuffleIn
         condensedInstructions = condenseCutsAndDWIs(condensedInstructions)
         condensedInstructions = condenseCutsAndReverses(condensedInstructions)
     }
+    condensedInstructions = condenseReverseAndDWIs(condensedInstructions)
     return condensedInstructions
 }
 
@@ -31,6 +32,33 @@ private fun condenseCutsAndDWIs(instructions: List<ShuffleInstruction>): List<Sh
         condensedInstructions = switchCutAndDWI(condensedInstructions)
     }
     return condensedInstructions
+}
+
+private fun condenseReverseAndDWIs(instructions: List<ShuffleInstruction>): List<ShuffleInstruction> {
+    var previousSize = instructions.size + 1
+    var condensedInstructions = instructions
+    while (previousSize > condensedInstructions.size) {
+        previousSize = condensedInstructions.size
+        condensedInstructions = changeReverseAndDwiIntoDWICutAndReverse(condensedInstructions)
+    }
+    return condensedInstructions
+}
+
+fun changeReverseAndDwiIntoDWICutAndReverse(instructions: List<ShuffleInstruction>): List<ShuffleInstruction> {
+    var i = findIndexOfReverseAndDwi(instructions, 0)
+    while (i < instructions.size) {
+        val switchedInstructions = switchReverseAndDWIAtIndex(instructions, i)
+        var compressedInstructions = compressInstructions(switchedInstructions)
+        compressedInstructions = compressInstructions(compressedInstructions)
+        compressedInstructions = compressInstructions(compressedInstructions)
+
+        if (compressedInstructions.size < instructions.size) {
+            return compressedInstructions
+        } else {
+            i = findIndexOfReverseAndDwi(instructions, i + 1)
+        }
+    }
+    return instructions
 }
 
 fun switchCutAndReverse(shuffleInstructions: List<ShuffleInstruction>): List<ShuffleInstruction> {
@@ -65,6 +93,16 @@ fun switchCutAndDWI(shuffleInstructions: List<ShuffleInstruction>): List<Shuffle
     return shuffleInstructions
 }
 
+fun switchReverseAndDWIAtIndex(shuffleInstructions: List<ShuffleInstruction>, i: Int): List<ShuffleInstruction> {
+    val instructions = shuffleInstructions.toMutableList()
+
+    val dWIInstruction = shuffleInstructions[i + 1]
+    instructions[i] = ShuffleInstruction(DEAL_WITH_INCREMENT, -1 * dWIInstruction.number)
+    instructions[i + 1] = ShuffleInstruction(CUT, -1 * (dWIInstruction.number -1))
+    instructions.add( i + 2, ShuffleInstruction(DEAL_INTO_NEW_STACK))
+    return instructions
+}
+
 private fun switchCutAndDwiAtIndex(
     shuffleInstructions: List<ShuffleInstruction>,
     i: Int
@@ -97,9 +135,22 @@ private fun switchCutAndReverseAtIndex(
     return instructions
 }
 
+fun findIndexOfReverseAndDwi(instructions: List<ShuffleInstruction>, index: Int): Int {
+    return findIndexOfInstructionAndInstruction(index, instructions, DEAL_INTO_NEW_STACK, DEAL_WITH_INCREMENT)
+}
+
 fun findIndexWhereCutAndDWICanBeSwitched(shuffleInstructions: List<ShuffleInstruction>, index: Int): Int {
+    return findIndexOfInstructionAndInstruction(index, shuffleInstructions, CUT, DEAL_WITH_INCREMENT)
+}
+
+private fun findIndexOfInstructionAndInstruction(
+    index: Int,
+    shuffleInstructions: List<ShuffleInstruction>,
+    instruction1: Instructiontype,
+    instruction2: Instructiontype
+): Int {
     return index.until(shuffleInstructions.size - 1).find { i ->
-        shuffleInstructions[i].type == CUT && shuffleInstructions[i + 1].type == DEAL_WITH_INCREMENT
+        shuffleInstructions[i].type == instruction1 && shuffleInstructions[i + 1].type == instruction2
     } ?: shuffleInstructions.size
 }
 

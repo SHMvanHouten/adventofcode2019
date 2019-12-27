@@ -39,9 +39,15 @@ fun dealWithIncrement(
     amount: Long,
     deckSize: Long
 ): Map<Long, Long> {
+    // todo: also change this for the "only one card" ways
+    val newAmount = if(amount < 0) {
+        deckSize - amount
+    } else {
+        amount
+    }
     val newDeck = mutableMapOf<Long, Long>()
     0L.until(deckSize).map { i ->
-        newDeck[(i * amount) % deckSize] = deck[i]!!
+        newDeck[(i * newAmount) % deckSize] = deck[i]!!
     }
     return newDeck
 }

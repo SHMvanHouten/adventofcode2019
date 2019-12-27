@@ -146,16 +146,14 @@ class CondensingTheInputTest {
 
         // (as long as all numbers in the end  are % stackSize
         assertThat(
-            shuffleToList(
-                10007,
+            shuffleToList(10007,
                 listOf(
                     ShuffleInstruction(CUT, 4),
                     ShuffleInstruction(DEAL_WITH_INCREMENT, 3)
                 )
             ),
             equalTo(
-                shuffleToList(
-                    10007,
+                shuffleToList(10007,
                     listOf(
                         ShuffleInstruction(DEAL_WITH_INCREMENT, 3),
                         ShuffleInstruction(CUT, (3 * 4))
@@ -164,16 +162,14 @@ class CondensingTheInputTest {
             )
         )
         assertThat(
-            shuffleToList(
-                10007,
+            shuffleToList(10007,
                 listOf(
                     ShuffleInstruction(CUT, -4),
                     ShuffleInstruction(DEAL_WITH_INCREMENT, 3)
                 )
             ),
             equalTo(
-                shuffleToList(
-                    10007,
+                shuffleToList(10007,
                     listOf(
                         ShuffleInstruction(DEAL_WITH_INCREMENT, 3),
                         ShuffleInstruction(CUT, (3 * -4))
@@ -182,16 +178,14 @@ class CondensingTheInputTest {
             )
         )
         assertThat(
-            shuffleToList(
-                10007,
+            shuffleToList(10007,
                 listOf(
                     ShuffleInstruction(CUT, 10000),
                     ShuffleInstruction(DEAL_WITH_INCREMENT, 18)
                 )
             ),
             equalTo(
-                shuffleToList(
-                    10007,
+                shuffleToList(10007,
                     listOf(
                         ShuffleInstruction(DEAL_WITH_INCREMENT, 18),
                         ShuffleInstruction(CUT, (10000 * 18 % 10007))
@@ -242,37 +236,34 @@ class CondensingTheInputTest {
     @Test
     internal fun `deal with increment (stackSize - 1) is reverse and cut -1`() {
         assertThat(
-            shuffleToList(
-                10007,
-                listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 10006))
-            ),
+            shuffleToList(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 10006))),
             equalTo(
-                shuffleToList(
-                    10007,
-                    listOf(
-                        ShuffleInstruction(DEAL_INTO_NEW_STACK),
-                        ShuffleInstruction(CUT, -1)
-                    )
+                shuffleToList(10007,listOf(ShuffleInstruction(DEAL_INTO_NEW_STACK), ShuffleInstruction(CUT, -1))
                 )
             )
         )
         assertThat(
-            shuffleToList(
-                10007,
-                listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 10006))
-            ),
+            shuffleToList(10007,listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, 10006))),
             equalTo(
-                shuffleToList(
-                    10007,
-                    listOf(
-                        ShuffleInstruction(CUT, 1),
-                        ShuffleInstruction(DEAL_INTO_NEW_STACK)
-                    )
+                shuffleToList(10007, listOf(ShuffleInstruction(CUT, 1), ShuffleInstruction(DEAL_INTO_NEW_STACK))
                 )
             )
         )
     }
 
+    @Test
+    internal fun `deal into stack, deal with increment x is equivalent to deal with increment -x, cut -(x - 1), deal into stack`() {
+        //deal into stack                deal with increment -x
+        //deal with increment x <==>     cut x - 1
+        //                               deal into stack
+        assertThat(
+            shuffleToList(10007, listOf(ShuffleInstruction(DEAL_INTO_NEW_STACK), ShuffleInstruction(DEAL_WITH_INCREMENT, 5209))),
+            equalTo(
+                shuffleToList(10007, listOf(ShuffleInstruction(DEAL_WITH_INCREMENT, -5209), ShuffleInstruction(CUT, -5208), ShuffleInstruction(DEAL_INTO_NEW_STACK))
+                )
+            )
+        )
+    }
 
     @Test
     internal fun `so deal into stack cut x deal into stack is the same as cut -x`() {
@@ -433,38 +424,37 @@ cut -2092"""
     @Test
     internal fun `condensedInstructions temp`() {
         val condensedInstructions = listOf(
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=11610),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=CUT,number=2653104),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=66),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=111042624000),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=174578040000),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=16200),
-            ShuffleInstruction(type=CUT,number=-6862861812890383810),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=1145760),
-            ShuffleInstruction(type=CUT,number=-121726336),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=7756961280),
-            ShuffleInstruction(type=CUT,number=-1549130178654),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=7446),
-            ShuffleInstruction(type=CUT,number=-55364818),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=CUT,number=-5046),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=75),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=2394),
-            ShuffleInstruction(type=CUT,number=266247),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=1556279200),
-            ShuffleInstruction(type=CUT,number=628192128984),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK,number=-1),
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT,number=150),
-            ShuffleInstruction(type=CUT,number=-5121)
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 11610),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = CUT, number = 2653104),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 66),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 111042624000),
+            ShuffleInstruction(type = CUT, number = -564592856500475),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 174578040000),
+            ShuffleInstruction(type = CUT, number = 528341139860631),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 16200),
+            ShuffleInstruction(type = CUT, number = 24596406),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 1145760),
+            ShuffleInstruction(type = CUT, number = -121726336),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 7756961280),
+            ShuffleInstruction(type = CUT, number = -1549130178654),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = -7446),
+            ShuffleInstruction(type = CUT, number = 55352327),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 75),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 2394),
+            ShuffleInstruction(type = CUT, number = 266247),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 1556279200),
+            ShuffleInstruction(type = CUT, number = 628192128984),
+            ShuffleInstruction(type = DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type = DEAL_WITH_INCREMENT, number = 150),
+            ShuffleInstruction(type = CUT, number = -5121)
         )
         val instructions = parseInstructions(input)
         assertThat(
