@@ -214,9 +214,7 @@ class Day22Test {
 
         @Test
         internal fun `part 2`() {
-//            println(inverseShuffleJustOneCardXTimes(2020, 119315717514047, 119315717514047 - 101741582076661 - 1, parseInstructions(input)))
-
-            // 119315717514047 - 101741582076661 = 17574135437386
+//           See CondensingTheInputTest
         }
 
     }

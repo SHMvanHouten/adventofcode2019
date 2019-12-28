@@ -91,7 +91,12 @@ fun switchCutAndDWI(shuffleInstructions: List<ShuffleInstruction>): List<Shuffle
         if (compressedInstructions.size < shuffleInstructions.size) {
             return compressedInstructions
         } else {
-            i = findIndexWhereCutAndDWICanBeSwitched(shuffleInstructions, i + 1)
+            val hadOtherOperationsDone = switchCutAndReverse(compressedInstructions)
+            if (hadOtherOperationsDone.size < instructions.size) {
+                return hadOtherOperationsDone
+            } else {
+                i = findIndexWhereCutAndDWICanBeSwitched(shuffleInstructions, i + 1)
+            }
         }
     }
     return shuffleInstructions

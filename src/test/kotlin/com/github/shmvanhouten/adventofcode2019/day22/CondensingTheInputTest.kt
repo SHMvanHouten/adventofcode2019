@@ -1,6 +1,8 @@
 package com.github.shmvanhouten.adventofcode2019.day22
 
 import com.github.shmvanhouten.adventofcode2019.day22.Instructiontype.*
+import com.github.shmvanhouten.adventofcode2019.util.findNeededPowersOf2ToGetTarget
+import com.github.shmvanhouten.adventofcode2019.util.powerOf2sUntilN
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
@@ -473,29 +475,52 @@ cut -2092"""
     }
 
     @Test
-    internal fun `condensed instructions x times`() {
-//        val condensedInstructions = listOf(
-//            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
-//            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
-//            ShuffleInstruction(type=CUT, number=BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428"))
-//        ).map { performModulusOnSize(it, 10007) }
-//        val repeatedInstructions = generateSequence(condensedInstructions){list -> list + condensedInstructions }.flatten().take(1234 * 3).toList()
-//        assertThat(repeatedInstructions.size, equalTo(1234 * 3))
-//        val condensedRepeated = condenseInstructions(repeatedInstructions)
-//        println(condensedRepeated.size)
-//        assertThat(
-//            findPositionOfCard(2019, shuffle(10007, condensedRepeated)),
-//            equalTo(shuffleJustOneCardXTimes(2019, 10007, 1234, parseInstructions(input)))
-//        )
+    internal fun bla() {
+        val instructions = listOf(
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type=CUT, number= BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428")),
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type=CUT, number= BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428"))
+        )
+
+        val condensed = listOf(
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000").times(BigInteger("-667487277673079497859196426642502502538645344354304000000000000000000"))),
+            ShuffleInstruction(type=CUT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000").minus(BigInteger.ONE).negate() + BigInteger("-152537919484486375356238506338573667307849959994388909641242808361847428") * (BigInteger("667487277673079497859196426642502502538645344354304000000000000000000") - BigInteger.ONE))
+        ).map { performModulusOnSize(it, 119315717514047) }
+        println(condensed)
+
+        val doubleCondensed = listOf(
+            ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(97659969542601)),
+            ShuffleInstruction(CUT, BigInteger.valueOf(50103195044617))
+        )
+        val testing = listOf(
+            ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(97659969542601) * BigInteger.valueOf(97659969542601)),
+            ShuffleInstruction(CUT, BigInteger.valueOf(50103195044617) * BigInteger.valueOf(97659969542601) + BigInteger.valueOf(50103195044617))
+        ).map { performModulusOnSize(it, 119315717514047) }
+        val quadCondensed = listOf(
+            ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(108924598018962)),
+            ShuffleInstruction(CUT, BigInteger.valueOf(11364558223257))
+        )
+        val anotherQuadCondensed = listOf(
+            ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(-21655747971446) * BigInteger.valueOf(-21655747971446)),
+            ShuffleInstruction(CUT, BigInteger.valueOf(-69212522469430) * (BigInteger.valueOf(-21655747971446) - BigInteger.ONE))
+        ).map { performModulusOnSize(it, 119315717514047) }
+        assertThat(testing, equalTo(quadCondensed))
+
+
+        // decksize = 41
+        // dwi = -1234
+        // 41 - (1234 % 41) == 41 - (-1234 % 41)
     }
 
     @Test
-    internal fun `condensed instructions x times extra condensed`() {
-        val condensedInstructions = listOf(
-            ShuffleInstruction(DEAL_WITH_INCREMENT, BigInteger.valueOf(6015 * 6015)),
-            ShuffleInstruction(CUT, BigInteger.valueOf(-6015 * 6824 + 6824 - 6014))
-        ).map { performModulusOnSize(it, 10007) }
-        val condensedTimes4 = condenseInstructions(condensedInstructions + condensedInstructions).map { performModulusOnSize(it, 10007) }
+    internal fun `condensed instructions x times`() {
+        val instructions = parseInstructions(input)
+        val condensedInstructions = condenseInstructions(instructions).map { performModulusOnSize(it, 10007) }
+        val doubleCondensed = condenseInstructions(condensedInstructions + condensedInstructions).map { performModulusOnSize(it, 10007) }
+        val condensedTimes4 = condenseInstructions(doubleCondensed + doubleCondensed).map { performModulusOnSize(it, 10007) }
         val condensedTimes8 = condenseInstructions(condensedTimes4 + condensedTimes4).map { performModulusOnSize(it, 10007) }
         val condensedTimes16 = condenseInstructions(condensedTimes8 + condensedTimes8).map { performModulusOnSize(it, 10007) }
         val condensedTimes32 = condenseInstructions(condensedTimes16 + condensedTimes16).map { performModulusOnSize(it, 10007) }
@@ -505,6 +530,51 @@ cut -2092"""
             findPositionOfCard(2019, shuffle(10007, condensedTimes64)),
             equalTo(shuffleJustOneCardXTimes(2019, 10007, 64, parseInstructions(input)))
         )
+    }
+
+    @Test
+    internal fun `part 1 shuffle fast test`() {
+        val instructions = parseInstructions(input)
+        assertThat(
+            shuffleOneCardFast(2019, 10007, 101741582076661, instructions),
+            equalTo(shuffleJustOneCardXTimes(2019, 10007, 101741582076661 % 10006, instructions))
+        )
+    }
+
+    @Test
+    internal fun `part2 test less shuffles`() {
+        val instructions = listOf(
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type=CUT, number= BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428"))
+        ).map { performModulusOnSize(it, 119315717514047) }
+        assertThat(
+            shuffleOneCardFast(2020, 119315717514047, 1, instructions + instructions),
+            equalTo(shuffleJustOneCardXTimes(2020, 119315717514047, 2, parseInstructions(input)))
+        )
+        0.until(200L).forEach { i ->
+            if (shuffleOneCardFast(2020, 119315717514047, 2, instructions) == shuffleJustOneCardXTimes(2020, 119315717514047, i, parseInstructions(input))) {
+                println(i)
+            }
+        }
+        assertThat(
+            shuffleOneCardFast(2020, 119315717514047, 3, instructions),
+            equalTo(shuffleJustOneCardXTimes(2020, 119315717514047, 2, parseInstructions(input)))
+        )
+    }
+
+    @Test
+    internal fun part2() {
+        val instructions = listOf(
+            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
+            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
+            ShuffleInstruction(type=CUT, number= BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428"))
+        ).map { performModulusOnSize(it, 119315717514047) }
+        assertThat(
+            shuffleOneCardFast(2020, 119315717514047, 101741582076661, parseInstructions(input)),
+            equalTo(1L)
+        )
+        // 49509926301364 too high
     }
 
     private val input = """deal with increment 18
