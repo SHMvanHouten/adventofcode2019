@@ -23,9 +23,9 @@ fun condenseInstructionsUntilTargetIsReached(
 
     val powersOf2 = findNeededPowersOf2ToGetTarget(BigInteger.valueOf(amountOfShuffles))
     val powerToCondensedInstruction = condenseInstructionsForEachPowerUntil(condensedInstructions, powersOf2.max()!!, deckSize)
-    return powersOf2.map { powerToCondensedInstruction[it]!! }.flatten()
+//    return powersOf2.map { powerToCondensedInstruction[it]!! }.flatten()
 
-//    return condenseUntilTargetIsReached(powersOf2, powerToCondensedInstruction, deckSize)
+    return condenseUntilTargetIsReached(powersOf2, powerToCondensedInstruction, deckSize)
 }
 
 private fun condenseUntilTargetIsReached(

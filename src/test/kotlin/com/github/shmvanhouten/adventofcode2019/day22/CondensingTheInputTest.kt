@@ -559,22 +559,26 @@ cut -2092"""
         }
         assertThat(
             shuffleOneCardFast(2020, 119315717514047, 3, instructions),
-            equalTo(shuffleJustOneCardXTimes(2020, 119315717514047, 2, parseInstructions(input)))
+            equalTo(shuffleJustOneCardXTimes(2020, 119315717514047, 3, parseInstructions(input)))
         )
     }
 
     @Test
     internal fun part2() {
-        val instructions = listOf(
-            ShuffleInstruction(type=DEAL_WITH_INCREMENT, number= BigInteger("667487277673079497859196426642502502538645344354304000000000000000000")),
-            ShuffleInstruction(type=DEAL_INTO_NEW_STACK),
-            ShuffleInstruction(type=CUT, number= BigInteger("152537919484486375356238506338573667307849959994388909641242808361847428"))
-        ).map { performModulusOnSize(it, 119315717514047) }
+        // we saw for the "simple" input (10007) that the pattern repeats after exactly 10006 runs
+        // so instead of trying to implement an inverse deal with increment function that doesn't take forever for this massive input
+        // I figured I could get the same result if we just loop the other way.
+        // It might still be interesting to learn how to do an inverse function though.
         assertThat(
-            shuffleOneCardFast(2020, 119315717514047, 101741582076661, parseInstructions(input)),
-            equalTo(1L)
+            shuffleOneCardFast(2020, 119315717514047, 119315717514047 - (101741582076661 + 1), parseInstructions(input)),
+            equalTo(32376123569821L)
         )
-        // 49509926301364 too high
+    }
+
+    @Test
+    internal fun `turns out we actually have to get the element at index 2020, not the index of the element 2020`() {
+        assertThat(shuffle(23, parseInstructions(input))[9],
+            equalTo(inverseShuffleOneCard(9, 23, parseInstructions(input))))
     }
 
     private val input = """deal with increment 18
