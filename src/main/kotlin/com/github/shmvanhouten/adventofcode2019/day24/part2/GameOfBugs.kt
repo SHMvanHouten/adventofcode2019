@@ -10,7 +10,7 @@ fun countBugs(eris: Eris): Int {
 fun tickTimes(eris: Eris, times: Int): Eris {
     var tickedEris = eris
     repeat(times) {
-        println(tickedEris.draw())
+//        println(tickedEris.draw())
         tickedEris = tickedEris.tick()
     }
     return tickedEris

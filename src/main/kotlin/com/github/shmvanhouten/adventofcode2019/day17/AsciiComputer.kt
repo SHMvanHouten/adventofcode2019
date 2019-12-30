@@ -9,7 +9,9 @@ class AsciiComputer(val computer: IComputer) {
         while (executionType == RUN) {
             executionType = computer.run()
         }
-        return computer.output.map { it.toChar() }.joinToString("")
+        val output = computer.output.joinToString("") { toAsciiOrInt(it) }
+        clear()
+        return output
     }
 
     fun run(vararg inputs: String): String {
@@ -32,5 +34,9 @@ class AsciiComputer(val computer: IComputer) {
             computer.input(c.toLong())
         }
 
+    }
+
+    fun clear() {
+        computer.output.clear()
     }
 }
