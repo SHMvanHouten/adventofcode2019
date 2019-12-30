@@ -1,4 +1,4 @@
-package com.github.shmvanhouten.adventofcode2019.day24
+package com.github.shmvanhouten.adventofcode2019.day24.part1
 
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Coordinate
 

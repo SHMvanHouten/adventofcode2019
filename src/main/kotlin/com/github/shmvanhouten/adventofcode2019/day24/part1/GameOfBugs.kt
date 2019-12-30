@@ -1,4 +1,4 @@
-package com.github.shmvanhouten.adventofcode2019.day24
+package com.github.shmvanhouten.adventofcode2019.day24.part1
 
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Coordinate
 import com.github.shmvanhouten.adventofcode2017.day03spiralmemory.Direction
@@ -22,7 +22,7 @@ data class Eris(val tiles: Map<Coordinate, Tile>) {
     fun tick(): Eris {
         return Eris(
             tiles.values.map { it.tick(tiles) }
-                .map{it.location to it}
+                .map { it.location to it }
                 .toMap()
         )
     }

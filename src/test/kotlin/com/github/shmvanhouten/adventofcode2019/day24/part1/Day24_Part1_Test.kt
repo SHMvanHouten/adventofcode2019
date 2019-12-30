@@ -1,4 +1,4 @@
-package com.github.shmvanhouten.adventofcode2019.day24
+package com.github.shmvanhouten.adventofcode2019.day24.part1
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigInteger
 
 @Suppress("ClassName")
-class Day24Test {
+class Day24_Part1_Test {
 
     @Nested
     inner class Part1 {
