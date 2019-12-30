@@ -17,10 +17,21 @@ class Day23Test {
     inner class Part1 {
 
         @Test
-        internal fun part1() = runBlocking{
-            network(intCode = IntCode(input))
-            assertThat(1, equalTo(1) )
+        internal fun part1() {
+            var natPackets = emptyList<Long>()
+            runBlocking {
+                natPackets = network(intCode = IntCode(input))
+            }
+            assertThat(natPackets.first(), equalTo(18982L) )
         }
     }
 
+    @Test
+    internal fun part2() {
+        var natPackets = emptyList<Long>()
+        runBlocking {
+            natPackets = network(intCode = IntCode(input))
+        }
+        assertThat(natPackets.last(), equalTo(11088L) )
+    }
 }

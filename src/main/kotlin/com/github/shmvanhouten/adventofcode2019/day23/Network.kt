@@ -9,16 +9,23 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import java.util.*
 
-fun network(intCode: IntCode) = runBlocking {
+suspend fun network(intCode: IntCode): List<Long> {
 
-    val output = Channel<Packet>()
-    val computers = build50Computers(intCode, output)
+    var natPackets = emptyList<Long>()
 
-    val packetDistributor = computers.map { it.address to mutableListOf<Packet>() }.plus(255L to mutableListOf()).toMap()
+    coroutineScope {
+        val output = Channel<Packet>()
+        val computers = build50Computers(intCode, output)
 
-    launchPacketDistributor(packetDistributor, output)
-    launchComputers(computers)
-    distributeOutput(packetDistributor, computers)
+        val (packetDistributor, packetDistributorJob) = launchPacketDistributor(computers, output)
+        val computerJobs = launchComputers(computers)
+
+        natPackets = distributeOutput(packetDistributor, computers)
+        computerJobs.forEach { it.cancelAndJoin() }
+        packetDistributorJob.cancelAndJoin()
+    }
+
+    return natPackets
 }
 
 private fun build50Computers(
@@ -36,17 +43,18 @@ private fun build50Computers(
 
 private fun CoroutineScope.launchComputers(
     computers: List<NetworkComputer>
-) {
-    computers.forEach {
+): List<Job> {
+    return computers.map {
         launchNetworkComputer(it)
     }
 }
 
 private fun CoroutineScope.launchPacketDistributor(
-    packetDistributor: Map<Address, MutableList<Packet>>,
+    computers: List<NetworkComputer>,
     output: Channel<Packet>
-) {
-    launch {
+): Pair<Map<Long, MutableList<Packet>>, Job> {
+    val packetDistributor = computers.map { it.address to mutableListOf<Packet>() }.plus(255L to mutableListOf()).toMap()
+    return packetDistributor to launch {
         while (true) {
             val packet = output.receive()
             packetDistributor[packet.address]?.add(packet)
@@ -54,54 +62,62 @@ private fun CoroutineScope.launchPacketDistributor(
     }
 }
 
-private fun CoroutineScope.distributeOutput(
+private suspend fun distributeOutput(
     packetDistributor: Map<Long, MutableList<Packet>>,
     computers: List<NetworkComputer>
-) = launch {
+): MutableList<Long> {
     val computersByAddress = computers.map { it.address to it }.toMap()
-    while (isActive) {
-        if(computers.all { it.state == IDLE } && theyAreStillIdle(computers)) {
-            val packet = packetDistributor[255L]?.last()?: throw IllegalStateException("No packets found at address 255")
-            println(packet)
+    val foundYs = mutableListOf<Long>()
+    while (foundYs.toSet().size == foundYs.size) {
+        if (isIdle(computers, packetDistributor)) {
+            val packet = getNatPacket(packetDistributor)
+            foundYs.add(packet.y)
             computersByAddress[0]?.input?.send(packet)
             computers.asSequence().forEach { it.state = ACTIVE }
         } else {
             computers.asSequence().forEach { computer ->
-                val packets = packetDistributor[computer.address]
-                    ?: throw IllegalStateException("No packets found at address ${computer.address}")
-                val packet = if (packets.isNotEmpty()) {
-                    packets.removeAt(0)
-                } else {
-                    Packet(computer.address, -1, -1)
-                }
-                computersByAddress[computer.address]?.input?.send(packet)
-                    ?: throw IllegalStateException("No computer found at address ${computer.address}")
+                sendPackets(packetDistributor, computer, computersByAddress)
             }
         }
     }
+    return foundYs
 }
 
-suspend fun theyAreStillIdle(computers: List<NetworkComputer>): Boolean {
-    delay(100)
-    return computers.all { it.state == IDLE }
+private fun getNatPacket(packetDistributor: Map<Long, MutableList<Packet>>): Packet {
+    val natPackets = packetDistributor.getPacket(255)
+    val packet = natPackets.last()
+    println(packet)
+    natPackets.clear()
+    return packet
 }
 
-fun CoroutineScope.launchNetworkComputer(
-    networkComputer: NetworkComputer
-) = launch {
+private suspend fun sendPackets(
+    packetDistributor: Map<Long, MutableList<Packet>>,
+    computer: NetworkComputer,
+    computersByAddress: Map<Long, NetworkComputer>
+) {
+    val packets = packetDistributor.getPacket(computer.address)
+    val packet = if (packets.isNotEmpty()) {
+        packets.removeAt(0)
+    } else {
+        Packet(computer.address, -1, -1)
+    }
+    computersByAddress.getComputer(computer.address).input.send(packet)
+}
+
+fun CoroutineScope.launchNetworkComputer(networkComputer: NetworkComputer) = launch {
     val computer = networkComputer.computer
     val receivedPackets = networkComputer.input
     val output = networkComputer.output
     while (isActive) {
         val packet = receivedPackets.receive()
         if (packet.x == -1L) {
-            if(computer.output.isEmpty()) {
+            if (computer.output.isEmpty()) {
                 networkComputer.state = IDLE
             }
             computer.input(-1L)
         } else {
             networkComputer.state = ACTIVE
-            println(packet.address)
             computer.input(packet.x)
             computer.input(packet.y)
         }
@@ -120,6 +136,19 @@ private fun toPacket(output: Queue<Long>): Packet {
     return Packet(address, x, y)
 }
 
+private fun isIdle(
+    computers: List<NetworkComputer>,
+    packetDistributor: Map<Long, MutableList<Packet>>
+) = computers.all { it.state == IDLE } && packetDistributor.getPacket(255).isNotEmpty()
+
+
+private fun Map<Address, MutableList<Packet>>.getPacket(address: Address): MutableList<Packet> {
+    return this[address] ?: throw IllegalStateException("No packets found at address $address")
+}
+private fun Map<Address, NetworkComputer>.getComputer(address: Address): NetworkComputer {
+    return this[address] ?: throw IllegalStateException("No computer found at address $address")
+}
+
 data class NetworkComputer(
     val address: Long,
     val input: Channel<Packet>,
@@ -131,10 +160,6 @@ data class NetworkComputer(
 data class Packet(val address: Address, val x: Long, val y: Long)
 
 typealias Address = Long
-
-private fun Map<Address, MutableList<Packet>>.getPacket(address: Address): MutableList<Packet> {
-    return this[address] ?: throw IllegalStateException("No packets found at address $address")
-}
 
 enum class NetworkComputerState {
     ACTIVE,
