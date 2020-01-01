@@ -22,7 +22,7 @@ class AsciiComputer(val computer: IComputer) {
     }
 
     private fun toAsciiOrInt(it: Long): String {
-        return if (it > 128) {
+        return if (it >= 128) {
             it.toString()
         } else {
             it.toChar().toString()
